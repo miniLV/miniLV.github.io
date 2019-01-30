@@ -1,6 +1,6 @@
 ---
 layout: page
-description: "Boilerplate of Hux Blog"
+description: "to be a better Developer,rua~"
 ---
 
 {% for post in paginator.posts %}
@@ -15,11 +15,15 @@ description: "Boilerplate of Hux Blog"
         </h3>
         {% endif %}
         <div class="post-content-preview">
+            {% if post.lang == 'en' %}
+            {{ post.content | strip_html | truncate:300 }}
+            {% else %}
             {{ post.content | strip_html | truncate:200 }}
+            {% endif %}
         </div>
     </a>
     <p class="post-meta">
-        Posted by {% if post.author %}{{ post.author }}{% else %}{{ site.title }}{% endif %} on {{ post.date | date: "%B %-d, %Y" }}
+    Posted by {% if post.author %}{{ post.author }}{% else %}{{ site.title }}{% endif %} on {{ post.date | date: "%B %-d, %Y" }}
     </p>
 </div>
 <hr>

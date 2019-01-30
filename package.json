@@ -1,9 +1,9 @@
 {
-    "name": "hux-blog",
-    "title": "Hux Blog",
+    "name": "miniLV-blog",
+    "title": "miniLV Blog",
     "version": "1.0.0",
     "homepage": "http://huxpro.github.io",
-    "author": "Hux",
+    "author": "miniLV",
     "devDependencies": {
         "grunt": "~0.4.5",
         "grunt-contrib-less": "~0.11.4",
