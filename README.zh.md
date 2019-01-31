@@ -1,4 +1,4 @@
-# Hux Blog模板小学生翻译(人人看得懂系列)
+# miniLV Blog模板
 
 
 ---
