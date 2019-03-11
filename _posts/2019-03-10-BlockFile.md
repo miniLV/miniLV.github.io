@@ -1,14 +1,14 @@
-
 ---
 layout:     post
 title:      "面试驱动技术 - Block详解"
 subtitle:   "Block常见考点"
-date:       2018-03-27 12:00:00
+date:       2019-02-27 12:00:00
 author:     "miniLV"
 header-img: "img/post-bg-2015.jpg"
 tags:
-- 面试
+    - 面试
 ---
+
 
 > 面试驱动技术合集（初中级iOS开发），关注仓库，及时获取更新 [Interview-series](https://github.com/miniLV/Interview-series)
 
@@ -993,7 +993,6 @@ obj.block();
 <br>
 
 block的文章其实很多，但是如果要真的深入理解，还是得动手，这里推荐初中级iOSer可以跟着本文的思路，一步一步跟着探究试试，本文只是起个抛砖引玉的作用
-
 
 ---
 
