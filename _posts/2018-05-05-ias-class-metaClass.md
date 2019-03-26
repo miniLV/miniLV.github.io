@@ -70,7 +70,7 @@ struct MNPerson_IMPL {
 ```
 
 > 使用指令 `xcrun -sdk iphoneos clang -arch arm64 -rewrite-objc oc源文件 -o 输出的c++文件`
-将 `oc` 代码转成 `c++` 代码之后，发现内部确实是结构体
+> 将 `oc` 代码转成 `c++` 代码之后，发现内部确实是结构体
 
 <br>
 
@@ -154,7 +154,7 @@ size_t instanceSize(size_t extraBytes) {
 ![一个NSObject内存分配示意图](https://user-gold-cdn.xitu.io/2019/1/20/1686a21aa70c5cea?w=738&h=706&f=png&s=103680)
 
 ### 总结：
-    
+
 - 问 ：一个NSObject 对象，占用多少内存?
 - 答 ：
      -  系统在alloc的时候，分配了16个字节给 `NSObject` 对象(`malloc_size`函数获得)
@@ -177,9 +177,10 @@ size_t instanceSize(size_t extraBytes) {
 - 问:一个MNStudent 对象，占用多少内存
 - 答: 
     - 由上面 `NSObject`占据16个字节可知，base = 16
-    -  一个int占4字节，age = 4， no = 4
-    -  最终结果， 16 + 4 + 4 = 24！
-    
+    - 一个int占4字节，age = 4， no = 4
+    - 最终结果， 16 + 4 + 4 = 24！
+
+
 ![](https://user-gold-cdn.xitu.io/2019/1/20/1686a45184a53001?w=214&h=236&f=jpeg&s=7578)
 
 *哈哈！中计了！*
@@ -193,7 +194,7 @@ size_t instanceSize(size_t extraBytes) {
 > 1. 之前 `NSObject` 创建一个对象，确实是分配了 16 个字节的空间
 > 2. 但是，他还有未使用的空间8个字节，还是可以存储的
 > 3. 这里的`age` && `no` 存进去，正好 `16`,之前分配的空间正好够用！所以答案是 16！
- 
+
 <br>
 
 #### 循循序渐进之面试题双来了！！
@@ -212,7 +213,7 @@ size_t instanceSize(size_t extraBytes) {
 - 答: 这题我真的会了！上面的坑老夫已经知道了！
     - 默认创建的时候，分配的内容是16
     - `isa` = 8, `int age` = 4, `int height` = 4, `NSString` = char * = 8
-    -  最终分配: 8 + 4 + 4 + 8 = 24
+    - 最终分配: 8 + 4 + 4 + 8 = 24
 
 
 ![](https://user-gold-cdn.xitu.io/2019/1/20/1686a638ec4c4997?w=224&h=225&f=jpeg&s=9717)
@@ -386,7 +387,7 @@ Class object_getClass(id obj)
     - 如果传入 `instance` 对象，返回 `class `
     - 如果传入 `class`, 返回的是 `meta-class` 对象
     - 如果传入的是 `meta-class`，返回的是 `root-meta-class` 对象
-<br>
+      <br>
 
 ```
 Class objc_getClass(const char *aClassName)
@@ -443,6 +444,7 @@ Class objc_getClass(const char *aClassName)
 }
 
 @end
+
 ```
 
 <br>
@@ -465,11 +467,14 @@ MNSubclass *subclass = [[MNSubclass alloc]init];
 
 
 
-`[MNSubclass superClassMethod];`
+
 
 <br>
 
 #### 问: 子类调用父类的类方法，执行的流程是如何的？
+
+`[MNSubclass superClassMethod];`
+
 - 思路：
     - 类方法存在`meta-class`中
     - 第一步，找到对应的`MNSubclass`,沿着`isa`指针，找到其对应的`meta-class`
@@ -492,7 +497,8 @@ MNSubclass *subclass = [[MNSubclass alloc]init];
     - 从面向对象的角度来讲，一个类调用一个类方法，不应该最后调用到 对象方法
     - 这里的`Root class` 就是 `NSObject`, 要给 `NSObject` 添加方法就要用到 `分类`
     - 验证 `NSObject` 的对象方法是否会被调用
-    
+
+
 <br>
 
 ```
@@ -578,11 +584,14 @@ InterView-obj-isa-class[36391:7022301] MNSubclass = 0x101239040
 - 原因： 
     - `[MNSubclass checkSuperclass]` 其实本质上，调用的是发送消息方法，函数类似是`objc_msgsend([MNSubclass class], @selector(checkSuperclass))`
     - 这里的`@selector(checkSuperclass)` 并未说明是 类方法 or 对象方法
-    - 所以最终走流程图的话，`root-meta-class`通过`isa`找到了`root-class` (NSObject)，
+    - 所以最终走流程图的话，`root-meta-class`通过`super class`找到了`root-class` (NSObject)，
     - `NSObject` 类不是元类，存储的是对象方法，所以 最终调用了`NSObject -checkSuperclass`这个对象方法
 
 
-![](https://user-gold-cdn.xitu.io/2019/1/20/1686ba6a4c9da68f?w=1704&h=1256&f=png&s=3682434)
+
+![image-20190326212536530](https://ws1.sinaimg.cn/large/006tKfTcgy1g1gim2q05zj314p0u0x6q.jpg)
+
+
 
 #### 叮叮叮！循循循序渐进之面试题叒来了！！
 
@@ -595,18 +604,15 @@ InterView-obj-isa-class[36391:7022301] MNSubclass = 0x101239040
 }
 @end
 
+----------------------------------------
 调用:
     MNSubclass *subclass = [[MNSubclass alloc]init];
-    [subclass subclassInstanceMethod];
+    [subclass compareSelfWithSuperclass];
 
 ```
+
 
 - 问: `[self class]` && `[super class]` 分别输出什么
-
-```
-@protocol NSObject
-- (Class)class OBJC_SWIFT_UNAVAILABLE("use 'type(of: anObject)' instead");
-```
 
 - 思路：
     - `class` 方法 是`NSObject` 的一个对象方法,对方方法存在 `class` 中
@@ -641,8 +647,9 @@ InterView-obj-isa-class[36796:7048007] super class = MNSubclass
 
 [demo](https://github.com/miniLV/Interview-series)
 
+*欢迎点赞fork~*
 
---- 
+---
 
 <br>
 
