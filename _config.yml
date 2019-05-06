@@ -90,11 +90,8 @@ friends: [
         title: "Foo",
         href: "#"
     },{
-        title: "Bar",
-        href: "#"
-    },{
-        title: "Example Friends",
-        href: "#"
+      title: "Jason Chen",
+      href: "https://defendhairline.github.io/"
     },{
         title: "It helps SEO",
         href: "#"
