@@ -17,7 +17,8 @@ tags:
 >解决方案：如果当前环境是测试服的时候，展示一个全局浮动标签，这样不仅看到此标志就告诉测试(包括我们自己)当前的环境，当出现问题的时候，通过标签，可以快速定位当前问题发生的版本号等等
 
 <br>
-![需求设计图.png](http://upload-images.jianshu.io/upload_images/4563271-db6a7256eb913f31.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+![需求设计图.png](https://user-gold-cdn.xitu.io/2019/1/31/168a3021b7941302?w=1126&h=600&f=png&s=777350)
 
 #### 思路：
 - 由于要全局显示，所以必须加在最上层（window层）
@@ -187,7 +188,7 @@ MNAssistiveTouchTypeHorizontalScroll, //只能竖直移动
 ``` 
 [MNFloatBtn sharedBtn].btnClick = ^(UIButton *sender) {
 
-	NSLog(@" btn.btnClick ~");
+    NSLog(@" btn.btnClick ~");
     
 };
 ```
