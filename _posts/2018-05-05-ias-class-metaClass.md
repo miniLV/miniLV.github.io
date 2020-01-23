@@ -8,8 +8,7 @@ header-img: "img/post-bg-2015.jpg"
 tags:
     - 面试
 ---
-
-![伪装成首页](https://user-gold-cdn.xitu.io/2019/1/20/1686bd4dc527d3fb?w=600&h=375&f=jpeg&s=58283)
+![伪装成首页](http://upload-images.jianshu.io/upload_images/4563271-5003192d9da1d3b9?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 ## 面试驱动技术之 - 带着面试题来找答案
 - 一个NSObject 对象，占用多少内存
@@ -37,7 +36,7 @@ tags:
 
 ## OC对象的本质
 我们平时编写的Objetcive-C,底层实现都是C/C++实现的
-![](https://user-gold-cdn.xitu.io/2019/1/20/16869da3925a64e1?w=1670&h=404&f=png&s=1032187)
+![image](http://upload-images.jianshu.io/upload_images/4563271-de80f49cd76ad6a3?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 - 问 : Objetcive-C 基于 C/C++ 实现的话，Objetcive-C 对象相当于C/C++ 中的什么数据结构呢？
 
@@ -58,14 +57,14 @@ tags:
 // 转成c/c++ 代码后，MNPerson 的结构如下
 
 struct NSObject_IMPL {
-	Class isa;
+    Class isa;
 };
 
 struct MNPerson_IMPL {
-	struct NSObject_IMPL NSObject_IVARS;
-	int _age;
-	double _height;
-	NSString *name;
+    struct NSObject_IMPL NSObject_IVARS;
+    int _age;
+    double _height;
+    NSString *name;
 };
 ```
 
@@ -151,7 +150,7 @@ size_t instanceSize(size_t extraBytes) {
 
 #### 一个NSObject内存分配示意图
 
-![一个NSObject内存分配示意图](https://user-gold-cdn.xitu.io/2019/1/20/1686a21aa70c5cea?w=738&h=706&f=png&s=103680)
+![一个NSObject内存分配示意图](http://upload-images.jianshu.io/upload_images/4563271-e6c0fac3e61d2f97?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 ### 总结：
 
@@ -181,15 +180,15 @@ size_t instanceSize(size_t extraBytes) {
     - 最终结果， 16 + 4 + 4 = 24！
 
 
-![](https://user-gold-cdn.xitu.io/2019/1/20/1686a45184a53001?w=214&h=236&f=jpeg&s=7578)
+![image](http://upload-images.jianshu.io/upload_images/4563271-fb7027b9254c72b2?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 *哈哈！中计了！*
 
-![](https://user-gold-cdn.xitu.io/2019/1/20/1686a47c212d59aa?w=1514&h=274&f=png&s=69432)
+![image](http://upload-images.jianshu.io/upload_images/4563271-23f586f773b57cd5?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 原理解释：
 
-![](https://user-gold-cdn.xitu.io/2019/1/20/1686a497b27e92d5?w=884&h=624&f=png&s=100148)
+![image](http://upload-images.jianshu.io/upload_images/4563271-c95f3ed5dd11873c?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 > 1. 之前 `NSObject` 创建一个对象，确实是分配了 16 个字节的空间
 > 2. 但是，他还有未使用的空间8个字节，还是可以存储的
@@ -216,12 +215,12 @@ size_t instanceSize(size_t extraBytes) {
     - 最终分配: 8 + 4 + 4 + 8 = 24
 
 
-![](https://user-gold-cdn.xitu.io/2019/1/20/1686a638ec4c4997?w=224&h=225&f=jpeg&s=9717)
+![image](http://upload-images.jianshu.io/upload_images/4563271-515e2383beb74f6e?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 哈哈哈哈！ 又中计了！
 
 
-![](https://user-gold-cdn.xitu.io/2019/1/20/1686a65d3345608c?w=1850&h=642&f=jpeg&s=199900)
+![image](http://upload-images.jianshu.io/upload_images/4563271-6084cfe1714fe863?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 这时候你肯定好奇了
 ```
@@ -243,7 +242,7 @@ size_t instanceSize(size_t extraBytes) {
 > - 内心os: who tm fucking 32?
 
 
-![](https://user-gold-cdn.xitu.io/2019/1/20/1686a6a4cabb4f94?w=227&h=222&f=jpeg&s=10654)
+![image](http://upload-images.jianshu.io/upload_images/4563271-00ea7fbb7f36de57?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 
 [ios内存分配源码](https://opensource.apple.com/tarballs/libmalloc/)
@@ -253,12 +252,12 @@ size_t instanceSize(size_t extraBytes) {
 void *
 calloc(size_t num_items, size_t size)
 {
-	void *retval;
-	retval = malloc_zone_calloc(default_zone, num_items, size);
-	if (retval == NULL) {
-		errno = ENOMEM;
-	}
-	return retval;
+    void *retval;
+    retval = malloc_zone_calloc(default_zone, num_items, size);
+    if (retval == NULL) {
+        errno = ENOMEM;
+    }
+    return retval;
 }
 
 发现这个函数，就是我们调用的`calloc`函数的底层
@@ -266,22 +265,22 @@ calloc(size_t num_items, size_t size)
 void *
 malloc_zone_calloc(malloc_zone_t *zone, size_t num_items, size_t size)
 {
-	MALLOC_TRACE(TRACE_calloc | DBG_FUNC_START, (uintptr_t)zone, num_items, size, 0);
+    MALLOC_TRACE(TRACE_calloc | DBG_FUNC_START, (uintptr_t)zone, num_items, size, 0);
 
-	void *ptr;
-	if (malloc_check_start && (malloc_check_counter++ >= malloc_check_start)) {
-		internal_check();
-	}
+    void *ptr;
+    if (malloc_check_start && (malloc_check_counter++ >= malloc_check_start)) {
+        internal_check();
+    }
 
-	ptr = zone->calloc(zone, num_items, size);
-	
-	if (malloc_logger) {
-		malloc_logger(MALLOC_LOG_TYPE_ALLOCATE | MALLOC_LOG_TYPE_HAS_ZONE | MALLOC_LOG_TYPE_CLEARED, (uintptr_t)zone,
-				(uintptr_t)(num_items * size), 0, (uintptr_t)ptr, 0);
-	}
+    ptr = zone->calloc(zone, num_items, size);
+    
+    if (malloc_logger) {
+        malloc_logger(MALLOC_LOG_TYPE_ALLOCATE | MALLOC_LOG_TYPE_HAS_ZONE | MALLOC_LOG_TYPE_CLEARED, (uintptr_t)zone,
+                (uintptr_t)(num_items * size), 0, (uintptr_t)ptr, 0);
+    }
 
-	MALLOC_TRACE(TRACE_calloc | DBG_FUNC_END, (uintptr_t)zone, num_items, size, (uintptr_t)ptr);
-	return ptr;
+    MALLOC_TRACE(TRACE_calloc | DBG_FUNC_END, (uintptr_t)zone, num_items, size, (uintptr_t)ptr);
+    return ptr;
 }
 
 ```
@@ -293,7 +292,7 @@ malloc_zone_calloc(malloc_zone_t *zone, size_t num_items, size_t size)
 检索`Buckets` - (libmalloc 源码)
 
 ```
-#define NANO_MAX_SIZE			256 
+#define NANO_MAX_SIZE            256 
 /* Buckets sized {16, 32, 48, ..., 256} */
 ```
 
@@ -303,7 +302,7 @@ malloc_zone_calloc(malloc_zone_t *zone, size_t num_items, size_t size)
 > 3. 所以，在`MNPerson` 对象需要 24 的size的时候，操作系统根据他的规则，直接创建了 32 的size的空间，所以这里的答案是 32！
 
 
-![](https://user-gold-cdn.xitu.io/2019/1/20/1686a8272a2a6731?w=214&h=235&f=jpeg&s=7934)
+![image](http://upload-images.jianshu.io/upload_images/4563271-36fbba1f061ebe8c?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 <br>
 
@@ -372,7 +371,7 @@ MNPerson
 <br>
 
 
-![](https://user-gold-cdn.xitu.io/2019/1/20/1686b3aec030b88c?w=1820&h=170&f=png&s=58160)
+![image](http://upload-images.jianshu.io/upload_images/4563271-abb8870d0118b410?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 提问：`object_getClass` 与 `objc_getClass`的区别
 
@@ -403,7 +402,7 @@ Class objc_getClass(const char *aClassName)
 
 
 
-![指向图.png](https://user-gold-cdn.xitu.io/2019/1/20/1686b6c4b09ac4b4?w=914&h=952&f=png&s=31609)
+![指向图.png](http://upload-images.jianshu.io/upload_images/4563271-a49e3100f4bd97a4?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 
 (图片来自于 http://www.sealiesoftware.com/blog/archive/2009/04/14/objc_explain_Classes_and_metaclasses.html)
@@ -463,7 +462,7 @@ MNSubclass *subclass = [[MNSubclass alloc]init];
     - 此时，`MNSuperclass` 中找到 `superclassInstanceMethod` 的实现，调用它，整个流程结束
 
 
-![](https://user-gold-cdn.xitu.io/2019/1/20/1686b75ce3d2419a?w=1710&h=1120&f=png&s=3043752)
+![image](http://upload-images.jianshu.io/upload_images/4563271-259d6576bf6e7835?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 
 
@@ -482,13 +481,13 @@ MNSubclass *subclass = [[MNSubclass alloc]init];
     - 发现 `MNSuperclass` 的 `meta-class` 有`superClassMethod` 方法实现，调用，流程结束
 
 
-![](https://user-gold-cdn.xitu.io/2019/1/20/1686b833b5ce8484?w=1688&h=910&f=png&s=2439763)
+![image](http://upload-images.jianshu.io/upload_images/4563271-7dacc1079e51c8e4?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 <br>
 
 #### 图中比较难理解的一根线
 
-![](https://user-gold-cdn.xitu.io/2019/1/20/1686b888daeda9e3?w=948&h=510&f=png&s=76400)
+![image](http://upload-images.jianshu.io/upload_images/4563271-dcd167724c28841f?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 #### 探究 : 元类对象的superclass 指针是否指向 rootclass
 
@@ -589,7 +588,7 @@ InterView-obj-isa-class[36391:7022301] MNSubclass = 0x101239040
 
 
 
-![image-20190326212536530](https://ws1.sinaimg.cn/large/006tKfTcgy1g1gim2q05zj314p0u0x6q.jpg)
+![image-20190326212536530](http://upload-images.jianshu.io/upload_images/4563271-d0a6f0eef8e3bf0b?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 
 
@@ -648,6 +647,27 @@ InterView-obj-isa-class[36796:7048007] super class = MNSubclass
 [demo](https://github.com/miniLV/Interview-series)
 
 *欢迎点赞fork~*
+
+---
+
+<br>
+
+友情客串：
+
+[小码哥](https://github.com/CoderMJLee)
+
+
+[神经病院runtime入学考试](https://blog.sunnyxx.com/2014/11/06/runtime-nuts/)
+
+[gun](https://www.gnu.org/software/libc/)
+
+[libmalloc](https://opensource.apple.com/tarballs/libmalloc/)
+
+[objc4](https://opensource.apple.com/tarballs/objc4/)
+
+[sealiesoftware.com](http://www.sealiesoftware.com/blog/archive/2009/04/14/objc_explain_Classes_and_metaclasses.html)
+
+_欢迎点赞fork~_
 
 ---
 
