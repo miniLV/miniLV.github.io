@@ -11,7 +11,7 @@ tags:
 
 
 
-![](https://github.com/miniLV/github_images_miniLV/tree/master/juejin/16f51fd23792e182?raw=true)
+![](https://github.com/miniLV/github_images_miniLV/blob/master/juejin/16f51fd23792e182?raw=true)
 
 
 今年的环境很差，很多大厂继去年的寒冬之后，今年又裁了一波(本地就有两个大厂上了新闻-。-)，我有两个哥们也是最近进入了找工作的状态。由于我之前做过一段时间的面试官，负责了一段时间iOS端的技术招聘，他们也咨询了我不少关于这方面的细节，借着这个机会，以一个初级面试官第一视角介绍下招聘方的想法。

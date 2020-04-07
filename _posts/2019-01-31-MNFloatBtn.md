@@ -11,14 +11,14 @@ tags:
 
 *背景介绍 ：在普通的iOS开发组中，一般测试机都不止一台，但是我们在开发的时候，不可能每台测试机时刻保持最新的代码，这就出现了一个问题，当测试测出问题的时候，(或者产品突然拿去点点看的时候出了问题)如果不知道当前的版本，可能不确定是什么时候出的问题。*
 
-![made in 小蠢驴的配图](https://github.com/miniLV/github_images_miniLV/tree/master/juejin/168a2d6d5de66c8d?raw=true)
+![made in 小蠢驴的配图](https://github.com/miniLV/github_images_miniLV/blob/master/juejin/168a2d6d5de66c8d?raw=true)
 
 
 >解决方案：如果当前环境是测试服的时候，展示一个全局浮动标签，这样不仅看到此标志就告诉测试(包括我们自己)当前的环境，当出现问题的时候，通过标签，可以快速定位当前问题发生的版本号等等
 
 <br>
 
-![需求设计图.png](https://github.com/miniLV/github_images_miniLV/tree/master/juejin/168a3021b7941302?raw=true)
+![需求设计图.png](https://github.com/miniLV/github_images_miniLV/blob/master/juejin/168a3021b7941302?raw=true)
 
 #### 思路：
 - 由于要全局显示，所以必须加在最上层（window层）
@@ -46,7 +46,7 @@ NSString *versionStr = [[[NSBundle
 NSString *buildStr = [[[NSBundle
        mainBundle]infoDictionary]valueForKey:@"CFBundleVersion"];
 ```
-![image.png](https://github.com/miniLV/github_images_miniLV/tree/master/juejin/168a2d6d5e1e9cdc?raw=true)
+![image.png](https://github.com/miniLV/github_images_miniLV/blob/master/juejin/168a2d6d5e1e9cdc?raw=true)
 
 #### 知识3：控件的移动 - 本质上:坐标 ++
 ```
@@ -148,7 +148,7 @@ MNAssistiveTouchTypeHorizontalScroll, //只能竖直移动
 
 #### 最终样式展示~
 
-![demo.gif](https://github.com/miniLV/github_images_miniLV/tree/master/juejin/168a2d80147f8435?raw=true)
+![demo.gif](https://github.com/miniLV/github_images_miniLV/blob/master/juejin/168a2d80147f8435?raw=true)
 
 <br>
 

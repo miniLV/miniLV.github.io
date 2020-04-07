@@ -13,7 +13,7 @@ tags:
 
 > 面试驱动技术合集（初中级iOS开发），关注仓库，及时获取更新 [Interview-series](https://github.com/miniLV/Interview-series)
 
-![image](https://github.com/miniLV/github_images_miniLV/tree/master/juejin/16fd041b499553bd?raw=true)
+![image](https://github.com/miniLV/github_images_miniLV/blob/master/juejin/16fd041b499553bd?raw=true)
 
 Block 在 iOS 算比较常见常用且常考的了，现在面试中，要么没面试题，有面试题的，基本都会考到 block 的点。**本文特别干！**(但是初中级iOSer应该能有所收获~)
 
@@ -55,7 +55,7 @@ typedef void(^MNBlock)(int);
 `typedef <#returnType#>(^<#name#>)(<#arguments#>);`
 
 
-![image](https://github.com/miniLV/github_images_miniLV/tree/master/juejin/16fd041b4c958749?raw=true)
+![image](https://github.com/miniLV/github_images_miniLV/blob/master/juejin/16fd041b4c958749?raw=true)
 
 
 **题目: 手撕代码 - 用Block实现两个数的求和**
@@ -73,12 +73,12 @@ typedef int(^MNBlock)(int a, int b);
 
 Vip补全功能:
 
-![image](https://github.com/miniLV/github_images_miniLV/tree/master/juejin/16fd041b4cafb073?raw=true)
+![image](https://github.com/miniLV/github_images_miniLV/blob/master/juejin/16fd041b4cafb073?raw=true)
 
 纸上按Enter没用啊兄弟！看来还是需要了解一下Block右边的东西~
 
 先在 Xcode上按下 Enter，了解下再撕
-![image](https://github.com/miniLV/github_images_miniLV/tree/master/juejin/16fd041b4f258093?raw=true)
+![image](https://github.com/miniLV/github_images_miniLV/blob/master/juejin/16fd041b4f258093?raw=true)
 
 ```
 ^int(int a, int b) {
@@ -87,7 +87,7 @@ Vip补全功能:
 }
 ```
 
-![image](https://github.com/miniLV/github_images_miniLV/tree/master/juejin/16fd041b5070781f?raw=true)
+![image](https://github.com/miniLV/github_images_miniLV/blob/master/juejin/16fd041b5070781f?raw=true)
 
 
 ```
@@ -98,7 +98,7 @@ int result = Sum(5, 10);
 ```
 
 
-![image](https://github.com/miniLV/github_images_miniLV/tree/master/juejin/16fd041b5526ab31?raw=true)
+![image](https://github.com/miniLV/github_images_miniLV/blob/master/juejin/16fd041b5526ab31?raw=true)
 
 
 
@@ -106,7 +106,7 @@ int result = Sum(5, 10);
 
 1.声明出错 - `void ^(testBlock)`
 
-![image](https://github.com/miniLV/github_images_miniLV/tree/master/juejin/16fd041b79c2d244?raw=true)
+![image](https://github.com/miniLV/github_images_miniLV/blob/master/juejin/16fd041b79c2d244?raw=true)
 
 
 修正版：
@@ -124,7 +124,7 @@ block的声明，^ 和 blockName 都是在小括号里面！！
 声明`typedef int(^MNBlock)(int, int);`
 
 
-![image](https://github.com/miniLV/github_images_miniLV/tree/master/juejin/16fd041b7ee9131a?raw=true)
+![image](https://github.com/miniLV/github_images_miniLV/blob/master/juejin/16fd041b7ee9131a?raw=true)
 
 ```
     self.sum = ^int(int a, int b) {
@@ -204,7 +204,7 @@ self.sum = ^int{
 
 **注意！！ 声明里面的返回值void是不可以省略的！！**
 
-![image](https://github.com/miniLV/github_images_miniLV/tree/master/juejin/16fd041b916500ee?raw=true)
+![image](https://github.com/miniLV/github_images_miniLV/blob/master/juejin/16fd041b916500ee?raw=true)
 
 
 4. 小箭头^混乱的问题,到底放小括号内还是小括号外
@@ -215,9 +215,9 @@ self.sum = ^int{
 
 注意，这里箭头之后的，不管是多写() 还是少写，都会出错
 
-![image](https://github.com/miniLV/github_images_miniLV/tree/master/juejin/16fd041b900d0685?raw=true)
+![image](https://github.com/miniLV/github_images_miniLV/blob/master/juejin/16fd041b900d0685?raw=true)
 
-![image](https://github.com/miniLV/github_images_miniLV/tree/master/juejin/16fd041b93188229?raw=true)
+![image](https://github.com/miniLV/github_images_miniLV/blob/master/juejin/16fd041b93188229?raw=true)
 
 > 所以这里还不能死记，比如不管声明还是实现,死记 (^ xxx) 是没问题的 or 死记 ^…… xxx 不加括号是没问题的,在这里都行不通，只能靠脑记了
 
@@ -232,7 +232,7 @@ self.sum = ^int{
 兄弟，看到这你还不乱吗！！
 
 
-![image](https://github.com/miniLV/github_images_miniLV/tree/master/juejin/16fd041b9be707fe?raw=true)
+![image](https://github.com/miniLV/github_images_miniLV/blob/master/juejin/16fd041b9be707fe?raw=true)
 
 怎么记看这里，
 - 手写分为两个部分，block等号左边 or 等号右边的，左边为声明，右边为实现区分开
@@ -339,7 +339,7 @@ struct __main_block_impl_0 {
 
 
 
-![image-20190307213258239](https://github.com/miniLV/github_images_miniLV/tree/master/juejin/16fd041bb7b89526?raw=true)
+![image-20190307213258239](https://github.com/miniLV/github_images_miniLV/blob/master/juejin/16fd041bb7b89526?raw=true)
 
 
 
@@ -375,12 +375,12 @@ MNBlock();
 
 
 
-![image-20190307214010613](https://github.com/miniLV/github_images_miniLV/tree/master/juejin/16fd041bbe9bc3a3?raw=true)
+![image-20190307214010613](https://github.com/miniLV/github_images_miniLV/blob/master/juejin/16fd041bbe9bc3a3?raw=true)
 
 block 内部直接捕获了传进去的这个变量a(10)
 
 
-![image](https://github.com/miniLV/github_images_miniLV/tree/master/juejin/16fd041bc8aec909?raw=true)
+![image](https://github.com/miniLV/github_images_miniLV/blob/master/juejin/16fd041bc8aec909?raw=true)
 
 
 
@@ -444,7 +444,7 @@ b 是 static 变量，走的是地址传递，所以会影响(指针指向同一
 
 **看图就行~**
 
-![image-20190307220857223](https://github.com/miniLV/github_images_miniLV/tree/master/juejin/16fd041bca774905?raw=true)
+![image-20190307220857223](https://github.com/miniLV/github_images_miniLV/blob/master/juejin/16fd041bca774905?raw=true)
 
 
 
@@ -547,11 +547,11 @@ print class
 总结:
 
 
-![image](https://github.com/miniLV/github_images_miniLV/tree/master/juejin/16fd041bcb790659?raw=true)
+![image](https://github.com/miniLV/github_images_miniLV/blob/master/juejin/16fd041bcb790659?raw=true)
 
 内存分配示意图：
 
-![image](https://github.com/miniLV/github_images_miniLV/tree/master/juejin/16fd041bcc135a3a?raw=true)
+![image](https://github.com/miniLV/github_images_miniLV/blob/master/juejin/16fd041bcc135a3a?raw=true)
 
 
 
@@ -637,7 +637,7 @@ NSLog(@"touchesBegan");
     - _Block_object_dispose 类似于 release，会对auto变量进行自动释放(当引用计数器=0的时候 )
 
 
-![image](https://github.com/miniLV/github_images_miniLV/tree/master/juejin/16fd041bfab9a542?raw=true)
+![image](https://github.com/miniLV/github_images_miniLV/blob/master/juejin/16fd041bfab9a542?raw=true)
 
 
 
@@ -669,7 +669,7 @@ void (^block)() = ^{
 
 结果如下：
 
-![image-20190308225448279](https://github.com/miniLV/github_images_miniLV/tree/master/juejin/16fd041c01813d3b?raw=true)
+![image-20190308225448279](https://github.com/miniLV/github_images_miniLV/blob/master/juejin/16fd041c01813d3b?raw=true)
 
 *思考：无法编译，为啥呢？编译的时候，block应该是会把auto变量捕获进去的，那block结构中应该有a才对啊*
 
@@ -763,7 +763,7 @@ a = 20;最终转成 `(a->__forwarding->a) = 20;`
 
 
 
-![image-20190309205908169](https://github.com/miniLV/github_images_miniLV/tree/master/juejin/16fd041c02adada0?raw=true)
+![image-20190309205908169](https://github.com/miniLV/github_images_miniLV/blob/master/juejin/16fd041c02adada0?raw=true)
 
 
 
@@ -779,9 +779,9 @@ a = 20;最终转成 `(a->__forwarding->a) = 20;`
 
 抄图分析 :
 
-![image-20190309210956453](https://github.com/miniLV/github_images_miniLV/tree/master/juejin/16fd041c0a00edf1?raw=true)
+![image-20190309210956453](https://github.com/miniLV/github_images_miniLV/blob/master/juejin/16fd041c0a00edf1?raw=true)
 
-![image-20190309211009229](https://github.com/miniLV/github_images_miniLV/tree/master/juejin/16fd041c256fd8b2?raw=true)
+![image-20190309211009229](https://github.com/miniLV/github_images_miniLV/blob/master/juejin/16fd041c256fd8b2?raw=true)
 
 
 
@@ -792,9 +792,9 @@ a = 20;最终转成 `(a->__forwarding->a) = 20;`
 
 
 
-![image-20190309211246277](https://github.com/miniLV/github_images_miniLV/tree/master/juejin/16fd041c0ece8edf?raw=true)
+![image-20190309211246277](https://github.com/miniLV/github_images_miniLV/blob/master/juejin/16fd041c0ece8edf?raw=true)
 
-![image-20190309211257030](https://github.com/miniLV/github_images_miniLV/tree/master/juejin/16fd041c303af7ee?raw=true)
+![image-20190309211257030](https://github.com/miniLV/github_images_miniLV/blob/master/juejin/16fd041c303af7ee?raw=true)
 
 **总结：**
 
@@ -817,7 +817,7 @@ a = 20;最终转成 `(a->__forwarding->a) = 20;`
 
 加入变量a在栈上，在栈上的指针，指向堆上的 block，堆上的block的 forwarding指向他自己，就可以保证，修改&获取的变量，都是堆上的变量
 
-![image-20190309213120820](https://github.com/miniLV/github_images_miniLV/tree/master/juejin/16fd041c38a0d8fc?raw=true)
+![image-20190309213120820](https://github.com/miniLV/github_images_miniLV/blob/master/juejin/16fd041c38a0d8fc?raw=true)
 
 最终，__block指向的变量，是指向堆上的
 
@@ -867,7 +867,7 @@ block();
 
 解释：ARC下
 
-![image-20190309220353476](https://github.com/miniLV/github_images_miniLV/tree/master/juejin/16fd041c4f4998af?raw=true)
+![image-20190309220353476](https://github.com/miniLV/github_images_miniLV/blob/master/juejin/16fd041c4f4998af?raw=true)
 
 
 
@@ -947,7 +947,7 @@ why? 上面关于 __block的总结
 
 
 
-![image-20190309224535679](https://github.com/miniLV/github_images_miniLV/tree/master/juejin/16fd041c3c2e27cf?raw=true)
+![image-20190309224535679](https://github.com/miniLV/github_images_miniLV/blob/master/juejin/16fd041c3c2e27cf?raw=true)
 
 
 
@@ -964,7 +964,7 @@ obj.block = [^{
 obj.block();
 ```
 
-![image-20190309225056495](https://github.com/miniLV/github_images_miniLV/tree/master/juejin/16fd041c5c94ae28?raw=true)
+![image-20190309225056495](https://github.com/miniLV/github_images_miniLV/blob/master/juejin/16fd041c5c94ae28?raw=true)
 
 
 
