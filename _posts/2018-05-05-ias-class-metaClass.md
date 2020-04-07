@@ -9,7 +9,7 @@ tags:
     - 面试
 ---
 
-![伪装成首页](https://user-gold-cdn.xitu.io/2020/1/23/16fd02b53587b3b1?w=600&h=375&f=jpeg&s=38570)
+![伪装成首页](https://github.com/miniLV/github_images_miniLV/tree/master/juejin/16fd02b53587b3b1?raw=true)
 
 ## 面试驱动技术之 - 带着面试题来找答案
 - 一个NSObject 对象，占用多少内存
@@ -39,7 +39,7 @@ tags:
 
 ## OC对象的本质
 我们平时编写的Objetcive-C,底层实现都是C/C++实现的
-![image](https://user-gold-cdn.xitu.io/2020/1/23/16fd02b536687997?w=1240&h=300&f=png&s=510117)
+![image](https://github.com/miniLV/github_images_miniLV/tree/master/juejin/16fd02b536687997?raw=true)
 
 - 问 : Objetcive-C 基于 C/C++ 实现的话，Objetcive-C 对象相当于C/C++ 中的什么数据结构呢？
 
@@ -153,7 +153,7 @@ size_t instanceSize(size_t extraBytes) {
 
 #### 一个NSObject内存分配示意图
 
-![一个NSObject内存分配示意图](https://user-gold-cdn.xitu.io/2020/1/23/16fd02b53b47ac0c?w=738&h=706&f=png&s=87143)
+![一个NSObject内存分配示意图](https://github.com/miniLV/github_images_miniLV/tree/master/juejin/16fd02b53b47ac0c?raw=true)
 
 ### 总结：
 
@@ -183,15 +183,15 @@ size_t instanceSize(size_t extraBytes) {
     - 最终结果， 16 + 4 + 4 = 24！
 
 
-![image](https://user-gold-cdn.xitu.io/2020/1/23/16fd02b53d2e8bf7?w=214&h=236&f=jpeg&s=8704)
+![image](https://github.com/miniLV/github_images_miniLV/tree/master/juejin/16fd02b53d2e8bf7?raw=true)
 
 *哈哈！中计了！*
 
-![image](https://user-gold-cdn.xitu.io/2020/1/23/16fd02b541059f64?w=1240&h=224&f=png&s=94002)
+![image](https://github.com/miniLV/github_images_miniLV/tree/master/juejin/16fd02b541059f64?raw=true)
 
 原理解释：
 
-![image](https://user-gold-cdn.xitu.io/2020/1/23/16fd02b5415cb186?w=884&h=624&f=png&s=80570)
+![image](https://github.com/miniLV/github_images_miniLV/tree/master/juejin/16fd02b5415cb186?raw=true)
 
 > 1. 之前 `NSObject` 创建一个对象，确实是分配了 16 个字节的空间
 > 2. 但是，他还有未使用的空间8个字节，还是可以存储的
@@ -218,12 +218,12 @@ size_t instanceSize(size_t extraBytes) {
     - 最终分配: 8 + 4 + 4 + 8 = 24
 
 
-![image](https://user-gold-cdn.xitu.io/2020/1/23/16fd02b5716c966f?w=224&h=225&f=jpeg&s=11343)
+![image](https://github.com/miniLV/github_images_miniLV/tree/master/juejin/16fd02b5716c966f?raw=true)
 
 哈哈哈哈！ 又中计了！
 
 
-![image](https://user-gold-cdn.xitu.io/2020/1/23/16fd02b572910bb0?w=1240&h=430&f=jpeg&s=61160)
+![image](https://github.com/miniLV/github_images_miniLV/tree/master/juejin/16fd02b572910bb0?raw=true)
 
 这时候你肯定好奇了
 ```
@@ -245,7 +245,7 @@ size_t instanceSize(size_t extraBytes) {
 > - 内心os: who tm fucking 32?
 
 
-![image](https://user-gold-cdn.xitu.io/2020/1/23/16fd02b57307f931?w=227&h=222&f=jpeg&s=11928)
+![image](https://github.com/miniLV/github_images_miniLV/tree/master/juejin/16fd02b57307f931?raw=true)
 
 
 [ios内存分配源码](https://opensource.apple.com/tarballs/libmalloc/)
@@ -305,7 +305,7 @@ malloc_zone_calloc(malloc_zone_t *zone, size_t num_items, size_t size)
 > 3. 所以，在`MNPerson` 对象需要 24 的size的时候，操作系统根据他的规则，直接创建了 32 的size的空间，所以这里的答案是 32！
 
 
-![image](https://user-gold-cdn.xitu.io/2020/1/23/16fd02b57fb03307?w=214&h=235&f=jpeg&s=8880)
+![image](https://github.com/miniLV/github_images_miniLV/tree/master/juejin/16fd02b57fb03307?raw=true)
 
 <br>
 
@@ -374,7 +374,7 @@ MNPerson
 <br>
 
 
-![image](https://user-gold-cdn.xitu.io/2020/1/23/16fd02b57d29ec17?w=1240&h=116&f=png&s=56596)
+![image](https://github.com/miniLV/github_images_miniLV/tree/master/juejin/16fd02b57d29ec17?raw=true)
 
 提问：`object_getClass` 与 `objc_getClass`的区别
 
@@ -405,7 +405,7 @@ Class objc_getClass(const char *aClassName)
 
 
 
-![指向图.png](https://user-gold-cdn.xitu.io/2020/1/23/16fd02b582c4ea50?w=914&h=952&f=png&s=29646)
+![指向图.png](https://github.com/miniLV/github_images_miniLV/tree/master/juejin/16fd02b582c4ea50?raw=true)
 
 
 (图片来自于 http://www.sealiesoftware.com/blog/archive/2009/04/14/objc_explain_Classes_and_metaclasses.html)
@@ -465,7 +465,7 @@ MNSubclass *subclass = [[MNSubclass alloc]init];
     - 此时，`MNSuperclass` 中找到 `superclassInstanceMethod` 的实现，调用它，整个流程结束
 
 
-![image](https://user-gold-cdn.xitu.io/2020/1/23/16fd02b5a8b62cc4?w=1240&h=812&f=png&s=1488247)
+![image](https://github.com/miniLV/github_images_miniLV/tree/master/juejin/16fd02b5a8b62cc4?raw=true)
 
 
 
@@ -484,13 +484,13 @@ MNSubclass *subclass = [[MNSubclass alloc]init];
     - 发现 `MNSuperclass` 的 `meta-class` 有`superClassMethod` 方法实现，调用，流程结束
 
 
-![image](https://user-gold-cdn.xitu.io/2020/1/23/16fd02b5aaae0102?w=1240&h=668&f=png&s=1235707)
+![image](https://github.com/miniLV/github_images_miniLV/tree/master/juejin/16fd02b5aaae0102?raw=true)
 
 <br>
 
 #### 图中比较难理解的一根线
 
-![image](https://user-gold-cdn.xitu.io/2020/1/23/16fd02b5b069470c?w=948&h=510&f=png&s=76410)
+![image](https://github.com/miniLV/github_images_miniLV/tree/master/juejin/16fd02b5b069470c?raw=true)
 
 #### 探究 : 元类对象的superclass 指针是否指向 rootclass
 
@@ -591,7 +591,7 @@ InterView-obj-isa-class[36391:7022301] MNSubclass = 0x101239040
 
 
 
-![image-20190326212536530](https://user-gold-cdn.xitu.io/2020/1/23/16fd02b5ae0f6501?w=1240&h=914&f=jpeg&s=172525)
+![image-20190326212536530](https://github.com/miniLV/github_images_miniLV/tree/master/juejin/16fd02b5ae0f6501?raw=true)
 
 
 

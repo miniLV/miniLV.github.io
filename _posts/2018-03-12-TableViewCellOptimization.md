@@ -17,7 +17,7 @@ tags:
 - 圆角切割
 - 等等. . .
 
-![made in 小蠢驴的配图](https://user-gold-cdn.xitu.io/2018/12/16/167b5cc0199f4aa3?w=400&h=300&f=jpeg&s=19073)
+![made in 小蠢驴的配图](https://github.com/miniLV/github_images_miniLV/tree/master/juejin/167b5cc0199f4aa3?raw=true)
 ### 进阶篇
 最近遇到一个需求，对`tableView`有中级优化需求
 1. 要求 `tableView` 滚动的时候,滚动到哪行，哪行的图片才加载并显示,滚动过程中图片不加载显示;
@@ -145,12 +145,12 @@ tags:
 可以理解为用户手已放开，试图是否还在滚动(是否惯性效果)
 
 ##### ScrollView一次拖拽的代理方法执行流程:
-![ScrollView流程图.png](https://user-gold-cdn.xitu.io/2018/12/16/167b5cc01a0084b9?w=1240&h=992&f=png&s=1194201)
+![ScrollView流程图.png](https://github.com/miniLV/github_images_miniLV/tree/master/juejin/167b5cc01a0084b9?raw=true)
 
 
 
 当前代码生效的效果如下:
-![demo.gif](https://user-gold-cdn.xitu.io/2018/12/16/167b5cc01a628414?w=382&h=666&f=gif&s=1559227)
+![demo.gif](https://github.com/miniLV/github_images_miniLV/tree/master/juejin/167b5cc01a628414?raw=true)
 
 
 #### RunLoop小操作
@@ -217,7 +217,7 @@ tags:
 }
 ```
 
-![runloopDemo.gif](https://user-gold-cdn.xitu.io/2018/12/16/167b5cc01a9b8e2f?w=382&h=666&f=gif&s=1362266)
+![runloopDemo.gif](https://github.com/miniLV/github_images_miniLV/tree/master/juejin/167b5cc01a9b8e2f?raw=true)
 > 效果如上
 > - 滚动的时候不加载图片,滚动结束加载图片-满足
 > - 滚动结束，之前滚动过程中的`cell`会加载图片 => 不满足需求

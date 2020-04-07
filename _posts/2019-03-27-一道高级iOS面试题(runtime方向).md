@@ -12,7 +12,7 @@ tags:
 
 > *面试驱动技术合集（初中级iOS开发），关注仓库，及时获取更新* [Interview-series](https://github.com/miniLV/Interview-series)
 
-![photo-1521120413309-42e7eada0334](https://user-gold-cdn.xitu.io/2019/3/31/169d447aa55fb28f?w=1500&h=1000&f=jpeg&s=119110)
+![photo-1521120413309-42e7eada0334](https://github.com/miniLV/github_images_miniLV/juejin/169d447aa55fb28f?raw=true)
 
 
 
@@ -66,7 +66,7 @@ tags:
 问输出结果是啥，会不会崩溃。
 
 
-![](https://user-gold-cdn.xitu.io/2019/3/31/169d44968ff6bab7?w=225&h=225&f=png&s=8339)
+![](https://github.com/miniLV/github_images_miniLV/juejin/169d44968ff6bab7?raw=true)
 
 <br>
 
@@ -88,7 +88,7 @@ what？
 
 当前内存地址结构 - 与正常的` [person print]` 对比
 
-![image-20190320211003867](https://user-gold-cdn.xitu.io/2019/3/31/169d447a7c8cacd3?w=1506&h=734&f=jpeg&s=228220)
+![image-20190320211003867](https://github.com/miniLV/github_images_miniLV/juejin/169d447a7c8cacd3?raw=true)
 
 
 
@@ -188,13 +188,13 @@ struct MNPerson_IMPL{
 
 
 
-![image-20190320214425257](https://user-gold-cdn.xitu.io/2019/3/31/169d447a9390b02a?w=1448&h=828&f=jpeg&s=235302)
+![image-20190320214425257](https://github.com/miniLV/github_images_miniLV/juejin/169d447a9390b02a?raw=true)
 
 
 
 而前面又说过，cls = isa，而_name 的地址 = isa往下偏移 8 个字节，所以上面的图可以转成
 
-![image-20190320214534204](https://user-gold-cdn.xitu.io/2019/3/31/169d447a93b646e2?w=1348&h=782&f=jpeg&s=203840)
+![image-20190320214534204](https://github.com/miniLV/github_images_miniLV/juejin/169d447a93b646e2?raw=true)
 
 
 
@@ -251,7 +251,7 @@ objc_msgSendSuper(temp, @selector(ViewDidLoad))
 
 结构体的地址 = 他的第一个成员，这里的第一个成员是self
 
-![image-20190320215517076](https://user-gold-cdn.xitu.io/2019/3/31/169d447a938981ee?w=1433&h=1080&f=jpeg&s=348723)
+![image-20190320215517076](https://github.com/miniLV/github_images_miniLV/juejin/169d447a938981ee?raw=true)
 
 
 
@@ -267,7 +267,7 @@ self.name = <ViewController: 0x7fc6e5f14970>
 
 
 
-![image-20190320220159663](https://user-gold-cdn.xitu.io/2019/3/31/169d447a94ceae1a?w=1812&h=384&f=jpeg&s=176101)
+![image-20190320220159663](https://github.com/miniLV/github_images_miniLV/juejin/169d447a94ceae1a?raw=true)
 
 
 
