@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Skill(humanizer-zh)",
+      "WebFetch(domain:juejin.cn)",
+      "mcp__github__get_file_contents",
+      "Bash(ls:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nAdd Paytick blog post \\(Chinese & English\\)\n\n- 100% Vibe Coding project introduction\n- Figma AI generated UI\n- Bilingual support with language switch\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git push:*)",
+      "Bash(gh run list:*)",
+      "Bash(git commit:*)"
+    ]
+  }
+}
