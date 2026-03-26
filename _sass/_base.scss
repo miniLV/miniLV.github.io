@@ -11,10 +11,7 @@ html {
 body {
   margin: 0;
   min-height: 100vh;
-  background:
-    radial-gradient(circle at top left, rgba(214, 157, 126, 0.18), transparent 26rem),
-    radial-gradient(circle at top right, rgba(184, 121, 84, 0.08), transparent 22rem),
-    linear-gradient(180deg, #faf4eb 0%, var(--bg-canvas) 35%, #f3ecdf 100%);
+  background: var(--bg-canvas);
   color: var(--text-primary);
   font-family: var(--font-ui);
   line-height: 1.7;
@@ -65,7 +62,7 @@ select {
   left: 1rem;
   top: -3rem;
   padding: 0.75rem 1rem;
-  border-radius: 999px;
+  border-radius: 0.25rem;
   background: var(--text-primary);
   color: #fff;
   z-index: 50;
@@ -132,7 +129,6 @@ select {
   border-radius: var(--radius-lg);
   background: var(--bg-elevated);
   box-shadow: var(--shadow-soft);
-  backdrop-filter: blur(12px);
 }
 
 .button-row {
@@ -147,7 +143,7 @@ select {
   justify-content: center;
   min-height: 3.1rem;
   padding: 0.85rem 1.35rem;
-  border-radius: 999px;
+  border-radius: 0.25rem;
   border: 1px solid var(--border-strong);
   font-size: 0.98rem;
   font-weight: 700;
@@ -186,7 +182,7 @@ select {
   min-height: 2.1rem;
   padding: 0.45rem 0.85rem;
   border: 1px solid var(--border-soft);
-  border-radius: 999px;
+  border-radius: 0.25rem;
   background: rgba(255, 255, 255, 0.45);
   color: var(--text-secondary);
   font-size: 0.9rem;
@@ -259,7 +255,7 @@ select {
 
 .prose code {
   padding: 0.2rem 0.42rem;
-  border-radius: 0.5rem;
+  border-radius: 0.2rem;
   background: rgba(106, 74, 56, 0.08);
   font-size: 0.9em;
 }

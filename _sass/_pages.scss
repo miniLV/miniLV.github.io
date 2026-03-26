@@ -106,7 +106,7 @@
 .article-hero__ambient span:nth-child(1) {
   inset: 0;
   background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.92), rgba(213, 163, 124, 0.18));
-  box-shadow: 0 24px 44px rgba(183, 103, 73, 0.18);
+  box-shadow: none;
 }
 
 .article-hero__ambient span:nth-child(2) {
