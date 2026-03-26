@@ -80,11 +80,6 @@
         font-size: 28px;
         font-weight: 700;
       }
-      .decision-sub {
-        fill: #f8e9ea;
-        font-size: 22px;
-        font-weight: 600;
-      }
       .branch {
         fill: #667085;
         font-size: 20px;
@@ -119,8 +114,7 @@
   <text class="label-light" x="620" y="343">DidEndDragging</text>
 
   <polygon class="diamond diamond-red" points="190,470 620,420 1050,470 620,520"/>
-  <text class="decision-main" x="620" y="463">decelerate</text>
-  <text class="decision-sub" x="620" y="494">(deceleration)</text>
+  <text class="decision-main" x="620" y="481">decelerate?</text>
 
   <rect class="box box-red" x="390" y="580" width="460" height="84" rx="26"/>
   <text class="label-dark" x="620" y="633">WillBeginDecelerating</text>
