@@ -1,11 +1,37 @@
+// ==========================================================================
+// Hero sections
+// ==========================================================================
+
 .home-hero,
 .page-hero,
 .article-hero,
 .not-found {
-  padding: 2rem 0 4rem;
+  padding: 3.5rem 0 2.5rem;
 }
 
-.home-hero__grid,
+.home-hero__content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  max-width: 38rem;
+}
+
+.home-hero__title {
+  font-size: clamp(2.2rem, 4.5vw, 3.4rem);
+  line-height: 1.06;
+}
+
+.home-hero__description {
+  max-width: 34rem;
+  font-size: clamp(1rem, 1.8vw, 1.12rem);
+  color: var(--text-secondary);
+  line-height: 1.65;
+}
+
+// ==========================================================================
+// Article hero (post detail page)
+// ==========================================================================
+
 .article-hero__grid {
   display: grid;
   grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.95fr);
@@ -13,41 +39,21 @@
   align-items: stretch;
 }
 
-.home-hero__content,
 .article-hero__content {
   display: grid;
   align-content: start;
   gap: 1rem;
 }
 
-.home-hero__title {
-  font-size: clamp(3rem, 6vw, 5.6rem);
-  line-height: 0.94;
-}
-
-.home-hero__description {
-  max-width: 42rem;
-  font-size: clamp(1.05rem, 2vw, 1.22rem);
-}
-
-.home-hero__aside {
-  align-self: stretch;
-}
-
-.page-hero .page-description {
-  max-width: 34rem;
-  font-size: 1.08rem;
-}
-
 .article-title {
-  font-size: clamp(2.8rem, 5vw, 4.8rem);
-  line-height: 0.98;
+  font-size: clamp(2.4rem, 4.5vw, 3.8rem);
+  line-height: 1.02;
 }
 
 .article-subtitle {
   margin: 0;
   color: var(--text-secondary);
-  font-size: clamp(1.1rem, 2vw, 1.35rem);
+  font-size: clamp(1.05rem, 1.8vw, 1.25rem);
 }
 
 .article-meta {
@@ -55,19 +61,19 @@
   flex-wrap: wrap;
   gap: 0.75rem;
   color: var(--text-muted);
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
 
 .article-summary {
   max-width: 40rem;
-  font-size: 1.12rem;
+  font-size: 1.08rem;
 }
 
 .article-hero__media {
   display: grid;
-  min-height: 20rem;
+  min-height: 18rem;
   overflow: hidden;
   border: 1px solid var(--border-soft);
   border-radius: var(--radius-xl);
@@ -88,7 +94,7 @@
 
 .article-hero__ambient {
   position: relative;
-  width: min(100%, 18rem);
+  width: min(100%, 16rem);
   aspect-ratio: 1;
 }
 
@@ -133,11 +139,25 @@
   padding: 2.1rem 0 0;
 }
 
+// Page hero (tags page, etc.)
+.page-hero .page-description {
+  max-width: 34rem;
+  font-size: 1.04rem;
+}
+
+// ==========================================================================
+// Tag groups
+// ==========================================================================
+
 .tag-groups {
   display: grid;
   gap: 2.4rem;
   margin-top: 2rem;
 }
+
+// ==========================================================================
+// 404
+// ==========================================================================
 
 .not-found__card {
   display: grid;
@@ -151,8 +171,11 @@
   color: var(--text-secondary);
 }
 
+// ==========================================================================
+// Responsive
+// ==========================================================================
+
 @media (max-width: $bp-desktop) {
-  .home-hero__grid,
   .article-hero__grid {
     grid-template-columns: 1fr;
   }
@@ -163,11 +186,11 @@
   .page-hero,
   .article-hero,
   .not-found {
-    padding: 1rem 0 3rem;
+    padding: 2rem 0 1.5rem;
   }
 
   .home-hero__title,
   .article-title {
-    line-height: 1;
+    line-height: 1.08;
   }
 }

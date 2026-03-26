@@ -1,11 +1,9 @@
 {% assign post = include.post %}
 {% assign is_featured = include.featured %}
-{% assign is_compact = include.compact %}
-{% assign summary_limit = 180 %}
+{% assign color_index = include.color_index | default: 0 %}
+{% assign summary_limit = 120 %}
 {% if is_featured %}
-  {% assign summary_limit = 260 %}
-{% elsif is_compact %}
-  {% assign summary_limit = 128 %}
+  {% assign summary_limit = 200 %}
 {% endif %}
 {% capture summary_source %}
   {% if post.summary %}
@@ -25,50 +23,43 @@
 {% if image_path and image_path contains '://' %}
   {% assign image_is_external = true %}
 {% endif %}
-{% assign primary_tag = post.tags.first | default: "Note" %}
-<article class="post-card{% if is_featured %} post-card--featured{% endif %}{% if is_compact %} post-card--compact{% endif %}">
-  <div class="post-card__media">
-    {% if image_path %}
-      <img
-        class="post-card__image"
-        src="{% if image_is_external %}{{ image_path }}{% else %}{{ image_path | relative_url }}{% endif %}"
-        alt="{{ post.title }}"
-        loading="lazy">
-    {% else %}
-      <div class="post-card__pattern" aria-hidden="true">
-        <span></span>
-        <span></span>
-        <span></span>
-        <div class="post-card__cover-copy">
-          <p>{{ primary_tag }}</p>
-          <strong>{{ post.title | truncate: 28 }}</strong>
+{% assign primary_tag = post.tags.first %}
+{% assign ci = color_index | modulo: 6 %}
+{% case ci %}
+  {% when 0 %}{% assign palette = "clay" %}
+  {% when 1 %}{% assign palette = "sky" %}
+  {% when 2 %}{% assign palette = "fig" %}
+  {% when 3 %}{% assign palette = "coral" %}
+  {% when 4 %}{% assign palette = "cactus" %}
+  {% when 5 %}{% assign palette = "olive" %}
+{% endcase %}
+<article class="post-item{% if is_featured %} post-item--featured{% endif %}">
+  <a href="{{ post.url | relative_url }}" class="post-item__link">
+    <div class="post-item__media post-item__media--{{ palette }}">
+      {% if image_path %}
+        <img
+          class="post-item__image"
+          src="{% if image_is_external %}{{ image_path }}{% else %}{{ image_path | relative_url }}{% endif %}"
+          alt="{{ post.title }}"
+          loading="lazy">
+      {% else %}
+        <div class="post-item__pattern" aria-hidden="true">
+          <span></span>
+          <span></span>
         </div>
-      </div>
-    {% endif %}
-  </div>
-  <div class="post-card__content">
-    <div class="post-card__meta">
-      <span>{{ post.date | date: "%Y.%m.%d" }}</span>
-      {% if is_featured %}
-        <span>Featured note</span>
       {% endif %}
     </div>
-    <h2 class="post-card__title">
-      <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
-    </h2>
-    {% if post.subtitle %}
-      <p class="post-card__subtitle">{{ post.subtitle }}</p>
-    {% endif %}
-    <p class="post-card__summary">{{ summary_text }}</p>
-    {% if post.tags %}
-      <div class="tag-list tag-list--muted">
-        {% for tag in post.tags limit: 4 %}
-          <a class="tag-pill" href="{{ '/tags/' | relative_url }}#tag-{{ tag | slugify }}">{{ tag }}</a>
-        {% endfor %}
+    <div class="post-item__content">
+      <div class="post-item__meta">
+        <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%Y.%m.%d" }}</time>
+        {% if primary_tag %}
+          <span class="post-item__tag">{{ primary_tag }}</span>
+        {% endif %}
       </div>
-    {% endif %}
-    <div class="post-card__cta">
-      <a class="text-link" href="{{ post.url | relative_url }}">Read note</a>
+      <h3 class="post-item__title">{{ post.title }}</h3>
+      {% if post.subtitle %}
+        <p class="post-item__subtitle">{{ post.subtitle }}</p>
+      {% endif %}
     </div>
-  </div>
+  </a>
 </article>

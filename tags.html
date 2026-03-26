@@ -15,7 +15,7 @@ description: "按主题浏览所有文章。"
 </section>
 
 <section class="page-section">
-  <div class="shell">
+  <div class="shell shell--narrow">
     <div class="tag-index">
       {% for tag in sorted_tags %}
         <a class="tag-chip" href="#tag-{{ tag[0] | slugify }}">
@@ -30,14 +30,13 @@ description: "按主题浏览所有文章。"
         <section class="tag-group" id="tag-{{ tag[0] | slugify }}">
           <div class="section-heading">
             <div>
-              <p class="eyebrow">Topic</p>
               <h2>{{ tag[0] }}</h2>
             </div>
-            <p class="section-heading__meta">{{ tag[1].size }} posts</p>
+            <p class="section-heading__meta">{{ tag[1].size }} 篇</p>
           </div>
-          <div class="post-feed post-feed--compact">
+          <div class="post-feed">
             {% for post in tag[1] %}
-              {% include post-card.html post=post compact=true %}
+              {% include post-card.html post=post color_index=forloop.index0 %}
             {% endfor %}
           </div>
         </section>
