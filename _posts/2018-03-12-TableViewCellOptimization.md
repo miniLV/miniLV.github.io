@@ -5,6 +5,7 @@ subtitle:   "cell的懒加载 && runloop && YYWebImage使用"
 date:       2018-06-29 12:00:00
 author:     "miniLV"
 header-img: "img/post-bg-2015.jpg"
+cover_image: "img/ios_tableview_banner.png"
 tags:
     - 性能优化
 ---
