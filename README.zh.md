@@ -1,89 +1,91 @@
-# miniLV Blog模板
+# miniLV Jekyll Notes
 
+这是一个以阅读体验为优先、保留 GitHub Pages 原生发布方式的 Jekyll 博客主题。
 
+## 你会得到什么
+
+- 继续在 `_posts/` 里写 Markdown
+- 继续用 GitHub Pages 自动发布
+- 样式改为 Jekyll 原生 SCSS，不再依赖 Grunt / LESS / jQuery / Bootstrap
+- 首页、文章页、标签页、404 页面统一为新的主题语言
+- 支持可选的 `summary` 和 `featured` front matter
+
+## 本地预览
+
+1. 安装 Ruby 和 Bundler
+2. 安装依赖：
+
+   ```bash
+   bundle install
+   ```
+
+3. 启动本地服务：
+
+   ```bash
+   bundle exec jekyll serve
+   ```
+
+4. 打开 `http://127.0.0.1:4000`
+
+## 新建文章
+
+在 `_posts/` 下创建一个 Markdown 文件，例如：
+
+```md
 ---
-### 使用说明
-
-#### 1. clone 或者 fork 该仓库
-
-```
-git clone https://github.com/miniLV/miniLV.github.io
-```
-
-#### 2. 替换成你自己的github.io仓库,建立新的关联
-
-```
-//直接修改
-git remote set-url origin [url]
-
-```
-
-```
-//实际操作
-git remote set-url origin https://github.com/miniLV/miniLV.github.io
-
-```
-
-> https://github.com/miniLV/miniLV.github.io 替换成你的仓库即可
-
-**[在这里预览模板 &rarr;](http://minilv.github.io)**
-
-#### 3. 具体配置
-
-你可以通用修改 `_config.yml`文件来轻松的开始搭建自己的博客:
-
-```
-# Site settings
-title: Hux Blog             # 你的博客网站标题
-SEOTitle: Hux Blog			# 在后面会详细谈到
-description: "Cool Blog"    # 随便说点，描述一下
-
-url: "https://github.com/miniLV/miniLV.github.io" # 特别要讲这个，直接用仓库路径
-baseurl: "/"         # 特别要讲这个，直接用当前目录路径 - “/”
-
-
-# SNS settings
-github_username: miniLV     # 你的github账号
-juejin_username: 5a0a82ac6fb9a04515436530 #掘金账号
-jianshu_username: eb8d9cad0ff2 #简书账号
-
-weibo_username: huxpro      # 你的微博账号，底部链接会自动更新的。
-
-# Build settings
-# paginate: 10              # 一页你准备放几篇文章
-```
-
-## 支持
-
-* 你可以自由的fork。如果你能将主题作者和 github 的地址保留在你的页面底部，他将非常感谢你。
-* 如果你喜欢我的这个简化版博客模板，请在`miniLV.github.io`这个repository点个赞——右上角**star**一下。
-* 如果你喜欢作者fork的这个博客模板，请在`huxpro.github.io`这个repository点个赞——右上角**star**一下。
-
-#### Environment
-
-如果你安装了jekyll，那你只需要在命令行输入`jekyll serve`就能在本地浏览器预览主题。你还可以输入`jekyll serve --watch`，这样可以边修改边自动运行修改后的文件。
-
-特别提醒: 推送到远程，只要一个push操作即可，然后检查`branch` 中 `master` 的状态(踩了大坑，囧！)
-
-![WX20190131-111113.png](https://upload-images.jianshu.io/upload_images/4563271-61b49260c39c1774.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-
-看到这种状态，说明你的个人网站已经部署到服务器成功~ 请在浏览器中输入具体url测试下~
-
-<br>
-
+layout: post
+title: "文章标题"
+subtitle: "可选副标题"
+date: 2026-03-26 12:00:00
+author: "你的名字"
+tags:
+  - Jekyll
+  - Notes
+summary: "可选，自定义卡片摘要。"
+featured: true
+header-img: "img/post-bg-2015.jpg"
 ---
 
-### 优化点
-- 解决了原模板中，直接push无法编译通过的bug
-- 添加了简书 && 掘金的入口
-- 隐藏了 “关于我” 的入口，适合像我这种小白暂时没什么拿得出手的东西，暂时关闭
-- 解决了原模板中，`Font Awesome` 无法显示的问题(图标无法显示-只能看到一个“知乎”的“知”字)
+正文内容写在这里。
+```
 
+说明：
 
-#### Tips
- 原模板中的几个坑都踩完了，目测当前仓库可以直接使用，如有问题，请联系 [miniLV](https://github.com/miniLV),如果他不能解决，请联系[Hux](https://github.com/Huxpro)!!
+- `summary` 可选，不填时会自动回退到 `subtitle` 或正文摘要
+- `featured` 可选，首页第 1 页会优先选中第一个 `featured: true` 的文章作为主打卡片
+- `header-img` 可选，不填也能正常渲染
 
----
+## 站点配置
 
+主要配置都集中在 `_config.yml`：
 
-*This is the boilerplate of [Hux Blog](https://github.com/Huxpro/huxpro.github.io), all documents is over there! Thinks Hux ~*
+- `hero_title`
+- `hero_description`
+- `hero_primary_cta`
+- `hero_secondary_cta`
+- `nav_items`
+- `social_links`
+- `footer_note`
+
+## 发布方式
+
+这个仓库仍然走 GitHub Pages 默认链路：
+
+1. 推送到你的 `<username>.github.io` 仓库
+2. 在 GitHub Pages 设置里选择默认分支发布
+3. GitHub Pages 会自动用 Jekyll 构建并上线
+
+不需要额外写 GitHub Actions。
+
+## 字体（可选）
+
+主题开箱即用，不装字体也能正常显示。如果想更接近目标风格，可以在本地安装：
+
+- `DM Sans`
+- `JetBrains Mono`
+
+主题的字体栈已经会在可用时自动使用它们。
+
+## 仓库说明
+
+- 旧的 Bootstrap / jQuery / LESS / Grunt 链路已经移除

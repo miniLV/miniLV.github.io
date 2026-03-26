@@ -1,67 +1,55 @@
-<!-- Navigation -->
-<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
-    <div class="container-fluid">
-        <!-- Brand and toggle get grouped for better mobile display -->
-        <div class="navbar-header page-scroll">
-            <button type="button" class="navbar-toggle">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="{{ site.baseurl }}/">{{ site.title }}</a>
+<header class="site-header" data-site-header>
+  <div class="shell site-header__inner">
+    <a class="site-brand" href="{{ '/' | relative_url }}">
+      <span class="site-brand__mark" aria-hidden="true">m</span>
+      <span class="site-brand__copy">
+        <span class="site-brand__title">{{ site.title }}</span>
+        <span class="site-brand__subtitle">{{ site.default_eyebrow }}</span>
+      </span>
+    </a>
+
+    <button
+      class="site-nav__toggle"
+      type="button"
+      data-nav-toggle
+      aria-expanded="false"
+      aria-controls="site-nav-drawer"
+      aria-label="Toggle navigation">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+    <nav class="site-nav" aria-label="Primary">
+      <div class="site-nav__drawer" id="site-nav-drawer" data-nav-drawer>
+        <ul class="site-nav__list">
+          {% for item in site.nav_items %}
+            {% assign item_is_external = false %}
+            {% if item.url contains '://' %}
+              {% assign item_is_external = true %}
+            {% endif %}
+            {% assign item_path = item.url | relative_url %}
+            {% assign is_active = false %}
+            {% if item.url == '/' and page.url == '/' %}
+              {% assign is_active = true %}
+            {% elsif item.url != '/' and page.url == item.url %}
+              {% assign is_active = true %}
+            {% endif %}
+            <li class="site-nav__item">
+              <a
+                class="site-nav__link{% if is_active %} is-active{% endif %}"
+                href="{% if item_is_external %}{{ item.url }}{% else %}{{ item_path }}{% endif %}"
+                {% if item_is_external %}target="_blank" rel="noreferrer"{% endif %}>
+                {{ item.title }}
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
+        <div class="site-nav__panel">
+          <p class="site-nav__eyebrow">{{ site.default_eyebrow }}</p>
+          <p class="site-nav__description">{{ site.description }}</p>
         </div>
-
-        <!-- Collect the nav links, forms, and other content for toggling -->
-        <!-- Known Issue, found by Hux:
-            <nav>'s height woule be hold on by its content.
-            so, when navbar scale out, the <nav> will cover tags.
-            also mask any touch event of tags, unfortunately.
-        -->
-        <div id="huxblog_navbar">
-            <div class="navbar-collapse">
-                <ul class="nav navbar-nav navbar-right">
-                    <li>
-                        <a href="{{ site.baseurl }}/">Home</a>
-                    </li>
-
-                    {% for page in site.pages %}{% if page.title %}
-                    <li>
-                        <a href="{{ page.url | prepend: site.baseurl }}">{{ page.title }}</a>
-                    </li>
-                    {% endif %}{% endfor %}
-                </ul>
-            </div>
-        </div>
-        <!-- /.navbar-collapse -->
-    </div>
-    <!-- /.container -->
-</nav>
-<script>
-    // Drop Bootstarp low-performance Navbar
-    // Use customize navbar with high-quality material design animation
-    // in high-perf jank-free CSS3 implementation
-    var $body   = document.body;
-    var $toggle = document.querySelector('.navbar-toggle');
-    var $navbar = document.querySelector('#huxblog_navbar');
-    var $collapse = document.querySelector('.navbar-collapse');
-
-    $toggle.addEventListener('click', handleMagic)
-    function handleMagic(e){
-        if ($navbar.className.indexOf('in') > 0) {
-        // CLOSE
-            $navbar.className = " ";
-            // wait until animation end.
-            setTimeout(function(){
-                // prevent frequently toggle
-                if($navbar.className.indexOf('in') < 0) {
-                    $collapse.style.height = "0px"
-                }
-            },400)
-        }else{
-        // OPEN
-            $collapse.style.height = "auto"
-            $navbar.className += " in";
-        }
-    }
-</script>
+      </div>
+    </nav>
+  </div>
+</header>

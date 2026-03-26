@@ -1,0 +1,47 @@
+$bp-tablet: 48rem;
+$bp-desktop: 72rem;
+
+:root {
+  --bg-canvas: #f5efe6;
+  --bg-elevated: rgba(255, 251, 245, 0.9);
+  --bg-muted: rgba(245, 236, 224, 0.82);
+  --bg-strong: #f0e3d2;
+  --text-primary: #201b16;
+  --text-secondary: #5b5045;
+  --text-muted: #877969;
+  --border-soft: rgba(72, 48, 30, 0.12);
+  --border-strong: rgba(72, 48, 30, 0.2);
+  --accent: #b76749;
+  --accent-strong: #8f4a33;
+  --accent-soft: rgba(183, 103, 73, 0.12);
+  --shadow-soft: 0 12px 40px rgba(52, 36, 23, 0.08);
+  --shadow-card: 0 18px 48px rgba(52, 36, 23, 0.1);
+  --radius-sm: 1rem;
+  --radius-md: 1.5rem;
+  --radius-lg: 2rem;
+  --radius-xl: 2.5rem;
+  --content-width: 76rem;
+  --narrow-width: 52rem;
+  --article-width: 58rem;
+  --header-height: 5.25rem;
+  --font-ui: "DM Sans", "Inter", "Helvetica Neue", Arial, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --font-editorial: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, "Songti SC", "Noto Serif SC", serif;
+  --font-mono: "JetBrains Mono", "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+}
+
+[data-theme="dark"] {
+  --bg-canvas: #16120f;
+  --bg-elevated: rgba(34, 27, 23, 0.92);
+  --bg-muted: rgba(44, 34, 28, 0.9);
+  --bg-strong: #2d221d;
+  --text-primary: #f7efe6;
+  --text-secondary: #dccdbc;
+  --text-muted: #a69482;
+  --border-soft: rgba(247, 239, 230, 0.14);
+  --border-strong: rgba(247, 239, 230, 0.22);
+  --accent: #dd8866;
+  --accent-strong: #f0a484;
+  --accent-soft: rgba(221, 136, 102, 0.12);
+  --shadow-soft: 0 14px 48px rgba(0, 0, 0, 0.28);
+  --shadow-card: 0 20px 64px rgba(0, 0, 0, 0.34);
+}

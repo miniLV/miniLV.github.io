@@ -1,46 +1,101 @@
 ---
-layout: page
-description: "to be a better Developer,rua~"
+layout: default
+body_class: page-home
 ---
 
-{% for post in paginator.posts %}
-<div class="post-preview">
-    <a href="{{ post.url | prepend: site.baseurl }}">
-        <h2 class="post-title">
-            {{ post.title }}
-        </h2>
-        {% if post.subtitle %}
-        <h3 class="post-subtitle">
-            {{ post.subtitle }}
-        </h3>
-        {% endif %}
-        <div class="post-content-preview">
-            {% if post.lang == 'en' %}
-            {{ post.content | strip_html | truncate:300 }}
-            {% else %}
-            {{ post.content | strip_html | truncate:200 }}
-            {% endif %}
-        </div>
-    </a>
-    <p class="post-meta">
-    Posted by {% if post.author %}{{ post.author }}{% else %}{{ site.title }}{% endif %} on {{ post.date | date: "%B %-d, %Y" }}
-    </p>
-</div>
-<hr>
-{% endfor %}
-
-<!-- Pager -->
-{% if paginator.total_pages > 1 %}
-<ul class="pager">
-    {% if paginator.previous_page %}
-    <li class="previous">
-        <a href="{{ paginator.previous_page_path | prepend: site.baseurl | replace: '//', '/' }}">&larr; Newer Posts</a>
-    </li>
+{% assign post_source = paginator.posts | default: site.posts %}
+{% assign current_page = paginator.page | default: 1 %}
+{% assign featured_post = post_source.first %}
+{% if current_page == 1 and post_source.size > 0 %}
+  {% for candidate in post_source %}
+    {% if candidate.featured %}
+      {% assign featured_post = candidate %}
+      {% break %}
     {% endif %}
-    {% if paginator.next_page %}
-    <li class="next">
-        <a href="{{ paginator.next_page_path | prepend: site.baseurl | replace: '//', '/' }}">Older Posts &rarr;</a>
-    </li>
-    {% endif %}
-</ul>
+  {% endfor %}
 {% endif %}
+{% assign primary_url = site.hero_primary_cta.url %}
+{% assign secondary_url = site.hero_secondary_cta.url %}
+<section class="home-hero">
+  <div class="shell home-hero__grid">
+    <div class="home-hero__content">
+      <p class="eyebrow">{{ site.default_eyebrow }}</p>
+      <h1 class="home-hero__title">{{ site.hero_title }}</h1>
+      <p class="home-hero__description">{{ site.hero_description }}</p>
+      <div class="button-row">
+        <a class="button button--primary" href="{% if primary_url contains '://' or primary_url contains '#' %}{{ primary_url }}{% else %}{{ primary_url | relative_url }}{% endif %}">{{ site.hero_primary_cta.label }}</a>
+        <a class="button button--secondary" href="{% if secondary_url contains '://' or secondary_url contains '#' %}{{ secondary_url }}{% else %}{{ secondary_url | relative_url }}{% endif %}">{{ site.hero_secondary_cta.label }}</a>
+      </div>
+    </div>
+    <aside class="surface-card home-hero__aside">
+      <p class="surface-card__eyebrow">Editorial system</p>
+      <h2>为长期阅读而生的 Jekyll 首页</h2>
+      <p>保留 Markdown 写作体验，削掉旧主题的年代感，用更克制的留白、边框、圆角和层次来承接内容。</p>
+      <dl class="metric-list">
+        <div>
+          <dt>{{ site.posts | size }}</dt>
+          <dd>notes</dd>
+        </div>
+        <div>
+          <dt>{{ site.tags | size }}</dt>
+          <dd>topics</dd>
+        </div>
+        <div>
+          <dt>Jekyll</dt>
+          <dd>native</dd>
+        </div>
+      </dl>
+    </aside>
+  </div>
+</section>
+
+{% if current_page == 1 and featured_post %}
+  <section class="page-section" id="latest-posts">
+    <div class="shell">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Featured</p>
+          <h2>本页主打文章</h2>
+        </div>
+      </div>
+      {% include post-card.html post=featured_post featured=true %}
+    </div>
+  </section>
+{% endif %}
+
+<section class="page-section">
+  <div class="shell">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">Archive</p>
+        <h2>最近更新</h2>
+      </div>
+      <p class="section-heading__meta">第 {{ current_page }} 页{% if paginator and paginator.total_pages > 1 %} / 共 {{ paginator.total_pages }} 页{% endif %}</p>
+    </div>
+
+    <div class="post-feed">
+      {% for post in post_source %}
+        {% if current_page == 1 and featured_post and post.url == featured_post.url %}
+          {% continue %}
+        {% endif %}
+        {% include post-card.html post=post %}
+      {% endfor %}
+    </div>
+
+    {% if paginator and paginator.total_pages > 1 %}
+      <nav class="pagination-nav" aria-label="Pagination">
+        {% if paginator.previous_page %}
+          <a class="pagination-nav__link" href="{{ paginator.previous_page_path | relative_url }}">Newer posts</a>
+        {% else %}
+          <span class="pagination-nav__link is-disabled">Newer posts</span>
+        {% endif %}
+        <span class="pagination-nav__status">Page {{ paginator.page }} of {{ paginator.total_pages }}</span>
+        {% if paginator.next_page %}
+          <a class="pagination-nav__link" href="{{ paginator.next_page_path | relative_url }}">Older posts</a>
+        {% else %}
+          <span class="pagination-nav__link is-disabled">Older posts</span>
+        {% endif %}
+      </nav>
+    {% endif %}
+  </div>
+</section>

@@ -1,6 +1,14 @@
 _site
-node_modules
+.sass-cache
+.jekyll-cache
+.jekyll-metadata
+.bundle
+vendor
+.idea
 .DS_Store
 */.DS_Store
 */*/.DS_Store
 *.sh
+*.xcuserstate
+*.xcworkspace/xcuserdata
+*.xcodeproj/xcuserdata
