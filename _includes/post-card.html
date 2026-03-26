@@ -10,8 +10,6 @@
 {% capture summary_source %}
   {% if post.summary %}
     {{ post.summary }}
-  {% elsif post.subtitle %}
-    {{ post.subtitle }}
   {% else %}
     {{ post.content | strip_html | strip_newlines }}
   {% endif %}

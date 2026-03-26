@@ -5,8 +5,6 @@ layout: default
 {% capture article_summary %}
   {% if page.summary %}
     {{ page.summary }}
-  {% elsif page.subtitle %}
-    {{ page.subtitle }}
   {% else %}
     {{ content | strip_html | strip_newlines | truncate: 200 }}
   {% endif %}
