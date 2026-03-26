@@ -1,7 +1,7 @@
 ---
 layout:     post
-title:      "iOS - 添加一个全局悬浮按钮"
-subtitle:   "集成pods版"
+title:      "iOS：添加一个全局悬浮按钮"
+subtitle:   "使用 CocoaPods 集成悬浮调试按钮"
 date:       2019-01-30 16:00:00
 author:     "miniLV"
 header-img: "img/ios_floatbtn_banner.png"
@@ -9,37 +9,37 @@ tags:
     - 工具
 ---
 
-*背景介绍 ：在普通的iOS开发组中，一般测试机都不止一台，但是我们在开发的时候，不可能每台测试机时刻保持最新的代码，这就出现了一个问题，当测试测出问题的时候，(或者产品突然拿去点点看的时候出了问题)如果不知道当前的版本，可能不确定是什么时候出的问题。*
+*在 iOS 团队协作里，测试设备通常不止一台，而不同设备上的安装包也未必始终保持同步。这样一来，测试发现问题时，或者产品临时拿起设备演示时，如果无法快速确认当前包体对应的环境、版本和构建号，排查成本就会明显增加。*
 
 ![made in 小蠢驴的配图](https://github.com/miniLV/github_images_miniLV/blob/master/juejin/168a2d6d5de66c8d?raw=true)
 
 
->解决方案：如果当前环境是测试服的时候，展示一个全局浮动标签，这样不仅看到此标志就告诉测试(包括我们自己)当前的环境，当出现问题的时候，通过标签，可以快速定位当前问题发生的版本号等等
+>一个更直接的做法是：在测试或开发环境中展示一个全局悬浮按钮，用来标识当前环境，并在需要时补充版本号、Build 信息。这样无论是测试、产品还是开发，都能第一时间确认当前包体信息。
 
 <br>
 
 ![需求设计图.png](https://github.com/miniLV/github_images_miniLV/blob/master/juejin/168a3021b7941302?raw=true)
 
 #### 思路：
-- 由于要全局显示，所以必须加在最上层（window层）
-- 由于需求图中有文字和背景图片，优先考虑UIButton（当然，如果有勇士非要用UIView，里面放imageView 和 label也o98k）
-- 由于此图片不是半透明，会挡住后面的内容，所以这个标签必须可以拖动 - 考虑添加拖拽手势
-- 本质上可以理解为，创建一个UIButton，为其添加拖拽手势，然后将其添加到UIWindow显示
+- 既然需要全局展示，就应该把控件加在最上层，也就是 `UIWindow` 上。
+- 需求里既有文字也有背景图，用 `UIButton` 来承载会更直接。
+- 按钮会遮挡部分界面内容，因此必须支持拖动，交互上可以通过手势来处理。
+- 整体实现并不复杂，本质上就是创建一个可拖拽的 `UIButton`，再把它挂到 `UIWindow` 上。
 
 ---
 
 <br>
 
-#### 知识1：按钮显示2行文字
+#### 知识1：按钮显示 2 行文字
 ```
-//UIbutton的换行显示
+// UIButton 支持多行标题显示
 button.titleLabel.lineBreakMode = NSLineBreakByWordWrapping;
 
-//然后如同title的内容用包含“\n”就会换行
-title = @“123\n666”
+// title 中插入 "\n" 即可换行
+title = @"123\n666";
 ```
 
-#### 知识2：Version 与 Build号的获取
+#### 知识2：获取 Version 和 Build 号
 ```
 NSString *versionStr = [[[NSBundle
        mainBundle]infoDictionary]valueForKey:@"CFBundleShortVersionString"];
@@ -48,9 +48,9 @@ NSString *buildStr = [[[NSBundle
 ```
 ![image.png](https://github.com/miniLV/github_images_miniLV/blob/master/juejin/168a2d6d5e1e9cdc?raw=true)
 
-#### 知识3：控件的移动 - 本质上:坐标 ++
+#### 知识3：拖动的本质是更新 `frame.origin`
 ```
-//拖动改变控件的水平方向x值
+// 拖动时更新控件的 x 坐标
 - (CGRect)changeXWithFrame:(CGRect)originalFrame point:(CGPoint)point{
     BOOL q1 = originalFrame.origin.x >= 0;
     BOOL q2 = originalFrame.origin.x + originalFrame.size.width <= screenW;
@@ -61,7 +61,7 @@ NSString *buildStr = [[[NSBundle
     return originalFrame;
 }
 
-//拖动改变控件的竖直方向y值
+// 拖动时更新控件的 y 坐标
 - (CGRect)changeYWithFrame:(CGRect)originalFrame point:(CGPoint)point{
     
     BOOL q1 = originalFrame.origin.y >= 0;
@@ -73,9 +73,9 @@ NSString *buildStr = [[[NSBundle
 }
 ```
 
-#### 知识4：控件的移动 - 越界处理(跑到屏幕外了)
+#### 知识4：越界处理与回弹
 ```
-//记录该button是否屏幕越界
+// 记录按钮是否越界
         BOOL isOver = NO;
         if (frame.origin.x < 0) {
             frame.origin.x = 0;
@@ -96,18 +96,18 @@ NSString *buildStr = [[[NSBundle
         }
         
         if (isOver) {
-            //如果越界-跑回来
+            // 如果越界，则回弹到可见区域
             [UIView animateWithDuration:0.3 animations:^{
                 self.frame = frame;
             }];
         }
 ```
 
-#### 知识5：封装需求 - 如果限制只能水平 or 竖直滑动 or 全局滑动
+#### 知识5：支持不同方向的拖动限制
 ```
-MNAssistiveTouchTypeNone = 0,         //没限制随便移动
-MNAssistiveTouchTypeVerticalScroll,   //只能垂直移动
-MNAssistiveTouchTypeHorizontalScroll, //只能竖直移动
+MNAssistiveTouchTypeNone = 0,         // 不限制方向，可自由拖动
+MNAssistiveTouchTypeVerticalScroll,   // 只能垂直移动
+MNAssistiveTouchTypeHorizontalScroll, // 只能水平移动
 ```
 
 ```
@@ -118,35 +118,17 @@ MNAssistiveTouchTypeHorizontalScroll, //只能竖直移动
             竖直方向坐标 ++；
             break;
         }case MNAssistiveTouchTypeHorizontalScroll:{
-            竖直方向坐标 ++；
+            水平方向坐标 ++；
             break;
         }
         case MNAssistiveTouchTypeVerticalScroll:{
-            水平方向坐标 ++；
+            竖直方向坐标 ++；
             break;
         }
     }
 ```
 
-#### 使用方法
->##### 0.下载[demo文件](https://github.com/miniLV/LevitationButtonDemo)
->##### 1.引入“MNAssistiveBtn”文件
->##### 2.进入“AppDelegate.m”
->##### 3.在  `- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions{...}` 方法中，添加以下两句代码
-```
-    //示例demo样式
-    MNAssistiveBtn *btn = [MNAssistiveBtn mn_touchWithType:MNAssistiveTouchTypeHorizontalScroll
-                                                     Frame:frame
-                                                     title:title
-                                                titleColor:[UIColor whiteColor]
-                                                 titleFont:[UIFont systemFontOfSize:11]
-                                           backgroundColor:nil
-                                           backgroundImage:[UIImage imageNamed:@"test"]];
-    [self.window addSubview:btn];
-```
-<br>
-
-#### 最终样式展示~
+#### 最终效果
 
 ![demo.gif](https://github.com/miniLV/github_images_miniLV/blob/master/juejin/168a2d80147f8435?raw=true)
 
@@ -155,54 +137,54 @@ MNAssistiveTouchTypeHorizontalScroll, //只能竖直移动
 ---
 
 
-## 集成方法
+## 集成与使用
 
-1.CocoaPods : `pod 'MNFloatBtn'`
+通过 CocoaPods 引入：
 
-2.手动导入 : 拖入`MNFloatBtn`文件夹 
+```ruby
+pod 'MNFloatBtn'
+```
 
-## 使用方法
-1. 导入头文件,`#import <MNFloatBtn/MNFloatBtn.h>`
-2. 一行代码,显示悬浮按钮
+导入头文件后，就可以直接使用：
+
+```objc
+#import <MNFloatBtn/MNFloatBtn.h>
+```
 
 ---
-- 任何情况都显示悬浮按钮
+- 如果希望悬浮按钮在任何环境下都显示，可以直接调用：
 ```
 [MNFloatBtn show];
 ```
 <br>
 
-- 仅在Debug模式下显示悬浮按钮(推荐使用)
+- 更推荐在 Debug 环境中显示，避免影响线上包：
 ```
 [MNFloatBtn showDebugModeWithType:MNAssistiveTypeNone];
 ```
 <br>
 
-- 移除悬浮按钮在界面上显示
+- 不再需要时，可以移除悬浮按钮：
 ```
 [MNFloatBtn hidden];
 ```
 
-- 按钮点击事件
+- 也可以为按钮补充点击事件：
 
 ``` 
 [MNFloatBtn sharedBtn].btnClick = ^(UIButton *sender) {
 
-    NSLog(@" btn.btnClick ~");
+    NSLog(@"btn.btnClick ~");
     
 };
 ```
 
----
-
-## 进阶用法:
-
-- 默认显示当前日期
+- 如果希望按钮上默认展示当前构建日期，可以这样设置：
 ```
 [[MNFloatBtn sharedBtn] setBuildShowDate:YES];
 ```
 
-- 配置api环境显示
+- 如果项目区分测试、开发、生产等 API 环境，也可以直接配置环境映射：
 
 ```
 
@@ -210,14 +192,14 @@ MNAssistiveTouchTypeHorizontalScroll, //只能竖直移动
 //#define kAddress            @"devapi.miniLV.com"
 //#define kAddress            @"api.miniLV.com"
     
-//自己配置 - 什么api环境下，要显示什么标签
+// 自定义不同 Host 对应的展示文案
 NSDictionary *envMap = @{
                          @"测试":@"testapi.miniLV.com",
                          @"开发":@"devapi.miniLV.com",
                          @"生产":@"api.miniLV.com"
                          };
                              
-//设置不同环境下，要展示的不同title，以及当前的Host
+// 设置当前 Host，并展示对应的环境标识
 [[MNFloatBtn sharedBtn]setEnvironmentMap:envMap currentEnv:kAddress]; 
     
 ```
