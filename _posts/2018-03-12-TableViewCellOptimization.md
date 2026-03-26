@@ -148,7 +148,7 @@ tags:
 可以理解为，用户手已经放开，但视图仍然在滚动，也就是惯性滚动阶段。
 
 ##### ScrollView一次拖拽的代理方法执行流程:
-![ScrollView流程图.png](https://github.com/miniLV/github_images_miniLV/blob/master/juejin/167b5cc01a0084b9?raw=true)
+![ScrollView flow diagram]({{ '/assets/images/tableview-scrollview-flow.svg' | relative_url }})
 
 
 
