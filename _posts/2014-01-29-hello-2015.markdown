@@ -4,8 +4,7 @@ title:      "Welcome to miniLV Blog"
 subtitle:   " \"Hello World, Hello Blog\""
 date:       2016-01-28 12:00:00
 author:     "miniLV"
-header-img: "img/post-bg-2015.jpg"
-cover_image: "img/hello_blog_banner.png"
+header-img: "img/hello_blog_banner.png"
 tags:
     - 序章
 ---

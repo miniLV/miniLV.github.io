@@ -4,7 +4,7 @@ title:      "iOS - 添加一个全局悬浮按钮"
 subtitle:   "集成pods版"
 date:       2019-01-30 16:00:00
 author:     "miniLV"
-header-img: "img/post-bg-2015.jpg"
+header-img: "img/ios_floatbtn_banner.png"
 tags:
     - 工具
 ---
