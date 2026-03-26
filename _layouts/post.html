@@ -11,7 +11,10 @@ layout: default
     {{ content | strip_html | strip_newlines | truncate: 200 }}
   {% endif %}
 {% endcapture %}
-{% assign hero_image = page.header-img %}
+{% assign hero_image = page.cover_image | default: page.header-img %}
+{% if hero_image == site.legacy_header_image %}
+  {% assign hero_image = nil %}
+{% endif %}
 {% assign hero_image_is_external = false %}
 {% if hero_image and hero_image contains '://' %}
   {% assign hero_image_is_external = true %}
@@ -50,7 +53,7 @@ layout: default
             <span></span>
             <span></span>
           </div>
-          <p class="article-hero__ambient-copy">Write Markdown. Push. Publish.</p>
+          <p class="article-hero__ambient-copy">{{ page.tags.first | default: "Personal note" }}</p>
         {% endif %}
       </div>
     </div>

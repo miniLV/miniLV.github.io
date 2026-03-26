@@ -95,13 +95,17 @@
   position: absolute;
   inset: 0;
   display: grid;
-  place-items: center;
+  align-content: space-between;
+  padding: 1.2rem;
+  background:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.85), transparent 34%),
+    linear-gradient(145deg, rgba(239, 224, 205, 0.9), rgba(221, 196, 172, 0.58) 48%, rgba(186, 131, 101, 0.22));
 }
 
 .post-card__pattern span {
   position: absolute;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.72);
+  background: rgba(255, 255, 255, 0.5);
 }
 
 .post-card__pattern span:nth-child(1) {
@@ -120,6 +124,36 @@
   height: 1px;
   background: rgba(111, 73, 51, 0.26);
   transform: rotate(-32deg);
+}
+
+.post-card__cover-copy {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 0.55rem;
+  align-self: end;
+  max-width: 18rem;
+}
+
+.post-card__cover-copy p,
+.post-card__cover-copy strong {
+  margin: 0;
+}
+
+.post-card__cover-copy p {
+  color: var(--accent-strong);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.post-card__cover-copy strong {
+  color: rgba(32, 27, 22, 0.92);
+  font-family: var(--font-editorial);
+  font-size: clamp(1.35rem, 2vw, 2rem);
+  font-weight: 600;
+  line-height: 1.04;
 }
 
 .post-card__content {

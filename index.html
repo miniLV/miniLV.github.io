@@ -28,21 +28,21 @@ body_class: page-home
       </div>
     </div>
     <aside class="surface-card home-hero__aside">
-      <p class="surface-card__eyebrow">Editorial system</p>
-      <h2>为长期阅读而生的 Jekyll 首页</h2>
-      <p>保留 Markdown 写作体验，削掉旧主题的年代感，用更克制的留白、边框、圆角和层次来承接内容。</p>
+      <p class="surface-card__eyebrow">平时会写</p>
+      <h2>iOS、架构、产品，还有开发现场</h2>
+      <p>更新不会很频繁，但尽量把问题讲具体，把踩过的坑和做判断时的想法都写明白一点。</p>
       <dl class="metric-list">
         <div>
-          <dt>{{ site.posts | size }}</dt>
-          <dd>notes</dd>
+          <dt>iOS</dt>
+          <dd>开发日常</dd>
         </div>
         <div>
-          <dt>{{ site.tags | size }}</dt>
-          <dd>topics</dd>
+          <dt>架构</dt>
+          <dd>设计与取舍</dd>
         </div>
         <div>
-          <dt>Jekyll</dt>
-          <dd>native</dd>
+          <dt>产品</dt>
+          <dd>一些感觉</dd>
         </div>
       </dl>
     </aside>
@@ -54,8 +54,8 @@ body_class: page-home
     <div class="shell">
       <div class="section-heading">
         <div>
-          <p class="eyebrow">Featured</p>
-          <h2>本页主打文章</h2>
+          <p class="eyebrow">推荐</p>
+          <h2>先看这篇</h2>
         </div>
       </div>
       {% include post-card.html post=featured_post featured=true %}
@@ -67,8 +67,8 @@ body_class: page-home
   <div class="shell">
     <div class="section-heading">
       <div>
-        <p class="eyebrow">Archive</p>
-        <h2>最近更新</h2>
+        <p class="eyebrow">最近</p>
+        <h2>最近写的</h2>
       </div>
       <p class="section-heading__meta">第 {{ current_page }} 页{% if paginator and paginator.total_pages > 1 %} / 共 {{ paginator.total_pages }} 页{% endif %}</p>
     </div>
@@ -85,15 +85,15 @@ body_class: page-home
     {% if paginator and paginator.total_pages > 1 %}
       <nav class="pagination-nav" aria-label="Pagination">
         {% if paginator.previous_page %}
-          <a class="pagination-nav__link" href="{{ paginator.previous_page_path | relative_url }}">Newer posts</a>
+          <a class="pagination-nav__link" href="{{ paginator.previous_page_path | relative_url }}">较新的文章</a>
         {% else %}
-          <span class="pagination-nav__link is-disabled">Newer posts</span>
+          <span class="pagination-nav__link is-disabled">较新的文章</span>
         {% endif %}
-        <span class="pagination-nav__status">Page {{ paginator.page }} of {{ paginator.total_pages }}</span>
+        <span class="pagination-nav__status">第 {{ paginator.page }} 页，共 {{ paginator.total_pages }} 页</span>
         {% if paginator.next_page %}
-          <a class="pagination-nav__link" href="{{ paginator.next_page_path | relative_url }}">Older posts</a>
+          <a class="pagination-nav__link" href="{{ paginator.next_page_path | relative_url }}">更早的文章</a>
         {% else %}
-          <span class="pagination-nav__link is-disabled">Older posts</span>
+          <span class="pagination-nav__link is-disabled">更早的文章</span>
         {% endif %}
       </nav>
     {% endif %}

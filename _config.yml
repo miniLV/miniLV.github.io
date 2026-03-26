@@ -24,14 +24,15 @@ exclude:
   - .claude
   - vendor
 
-default_eyebrow: "miniLV Notes"
-hero_title: "写给长期主义者的技术笔记"
-hero_description: "关于 iOS、架构、产品感觉和真实开发现场的文章集合。继续写 Markdown，渲染和发布交给 Jekyll 与 GitHub Pages。"
+default_eyebrow: "miniLV 的博客"
+legacy_header_image: "img/post-bg-2015.jpg"
+hero_title: "一些关于 iOS、架构和产品的笔记"
+hero_description: "平时写下来的东西，大多和 iOS、架构、产品感觉，以及真实开发里碰到的问题有关。"
 hero_primary_cta:
-  label: "Read latest"
+  label: "最近写的"
   url: "#latest-posts"
 hero_secondary_cta:
-  label: "Browse tags"
+  label: "按标签看"
   url: "/tags/"
 
 nav_items:
@@ -53,4 +54,4 @@ social_links:
     label: "jianshu"
     url: "https://www.jianshu.com/u/eb8d9cad0ff2"
 
-footer_note: "Built with Jekyll. Write Markdown, push, and publish."
+footer_note: "继续写 Markdown，慢慢更新。"

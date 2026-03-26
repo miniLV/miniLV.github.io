@@ -17,11 +17,17 @@
   {% endif %}
 {% endcapture %}
 {% assign summary_text = summary_source | strip | replace: "  ", " " | truncate: summary_limit %}
-{% assign image_path = post.header-img %}
+{% assign image_path = post.cover_image %}
+{% if image_path == nil or image_path == "" %}
+  {% if post.header-img and post.header-img != site.legacy_header_image %}
+    {% assign image_path = post.header-img %}
+  {% endif %}
+{% endif %}
 {% assign image_is_external = false %}
 {% if image_path and image_path contains '://' %}
   {% assign image_is_external = true %}
 {% endif %}
+{% assign primary_tag = post.tags.first | default: "Note" %}
 <article class="post-card{% if is_featured %} post-card--featured{% endif %}{% if is_compact %} post-card--compact{% endif %}">
   <div class="post-card__media">
     {% if image_path %}
@@ -35,6 +41,10 @@
         <span></span>
         <span></span>
         <span></span>
+        <div class="post-card__cover-copy">
+          <p>{{ primary_tag }}</p>
+          <strong>{{ post.title | truncate: 28 }}</strong>
+        </div>
       </div>
     {% endif %}
   </div>
