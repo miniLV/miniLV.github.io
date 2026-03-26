@@ -1,140 +1,31 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1240 992" role="img" aria-labelledby="title desc">
-  <title id="title">ScrollView Dragging Delegate Flow</title>
-  <desc id="desc">Flow between WillBeginDragging, DidScroll, DidEndDragging, decelerate, WillBeginDecelerating, touch, DidEndDecelerating, and End.</desc>
+  <title id="title">ScrollView flow diagram</title>
+  <desc id="desc">The original flow diagram with added directional arrows for the main branches and loops.</desc>
   <defs>
-    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#fffaf1"/>
-      <stop offset="100%" stop-color="#f7efe3"/>
-    </linearGradient>
-    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="12" stdDeviation="12" flood-color="#8b6b4f" flood-opacity="0.14"/>
-    </filter>
-    <marker id="arrow" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="10" markerHeight="10" orient="auto-start-reverse">
-      <path d="M 0 0 L 14 7 L 0 14 z" fill="#6b7280"/>
+    <marker id="arrow" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 12 6 L 0 12 z" fill="#6f747f"/>
     </marker>
     <style>
-      .frame {
-        fill: url(#bg);
-        stroke: #eadfce;
-        stroke-width: 2;
-      }
-      .guide {
-        stroke: #d9ccb7;
-        stroke-width: 4;
-        stroke-linecap: round;
-        opacity: 0.9;
-      }
       .flow {
         fill: none;
-        stroke: #6b7280;
-        stroke-width: 5;
+        stroke: #6f747f;
+        stroke-width: 4;
         stroke-linecap: round;
         stroke-linejoin: round;
         marker-end: url(#arrow);
+        opacity: 0.96;
       }
-      .box,
-      .diamond,
-      .end {
-        filter: url(#shadow);
-      }
-      .box-red {
-        fill: #c86b6b;
-      }
-      .box-green {
-        fill: #9fbd77;
-      }
-      .box-gold {
-        fill: #d2b056;
-      }
-      .diamond-red {
-        fill: #b85f66;
-      }
-      .diamond-blue {
-        fill: #6e9fb1;
-      }
-      .end-fill {
-        fill: #b85f66;
-      }
-      .label-dark,
-      .label-light,
-      .branch,
-      .decision-main,
-      .decision-sub {
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
-        text-anchor: middle;
-      }
-      .label-dark {
-        fill: #1f2937;
-        font-size: 30px;
-        font-weight: 700;
-        letter-spacing: 0.2px;
-      }
-      .label-light {
-        fill: #ffffff;
-        font-size: 30px;
-        font-weight: 700;
-        letter-spacing: 0.2px;
-      }
-      .decision-main {
-        fill: #fffaf5;
-        font-size: 28px;
-        font-weight: 700;
-      }
-      .branch {
-        fill: #667085;
-        font-size: 20px;
-        font-weight: 700;
+      .arrowhead {
+        fill: #6f747f;
+        opacity: 0.96;
       }
     </style>
   </defs>
 
-  <rect class="frame" x="16" y="16" width="1208" height="960" rx="34"/>
-  <line class="guide" x1="36" y1="46" x2="1204" y2="46"/>
-  <line class="guide" x1="36" y1="944" x2="1204" y2="944"/>
+  <image href="tableview-scrollview-flow-base.png" x="0" y="0" width="1240" height="992"/>
 
-  <path class="flow" d="M 620 150 V 180"/>
-  <path class="flow" d="M 620 260 V 292"/>
-  <path class="flow" d="M 620 372 V 420"/>
-  <path class="flow" d="M 620 520 V 580"/>
-  <path class="flow" d="M 620 664 V 684"/>
-  <path class="flow" d="M 620 776 V 808"/>
-  <path class="flow" d="M 880 840 H 1101"/>
-  <path class="flow" d="M 1010 886 V 910 H 620 V 902"/>
-  <path class="flow" d="M 1050 470 H 1100 V 794"/>
-  <path class="flow" d="M 522 730 H 118 V 110 H 420"/>
-  <path class="flow" d="M 620 892 V 902"/>
-
-  <rect class="box box-red" x="420" y="70" width="400" height="80" rx="26"/>
-  <text class="label-dark" x="620" y="121">WillBeginDragging</text>
-
-  <rect class="box box-red" x="440" y="180" width="360" height="80" rx="26"/>
-  <text class="label-dark" x="620" y="231">DidScroll</text>
-
-  <rect class="box box-green" x="418" y="292" width="404" height="80" rx="26"/>
-  <text class="label-light" x="620" y="343">DidEndDragging</text>
-
-  <polygon class="diamond diamond-red" points="190,470 620,420 1050,470 620,520"/>
-  <text class="decision-main" x="620" y="481">decelerate?</text>
-
-  <rect class="box box-red" x="390" y="580" width="460" height="84" rx="26"/>
-  <text class="label-dark" x="620" y="633">WillBeginDecelerating</text>
-
-  <polygon class="diamond diamond-blue" points="620,684 718,730 620,776 522,730"/>
-  <text class="label-light" x="620" y="738" font-size="22">touch</text>
-
-  <rect class="box box-gold" x="360" y="808" width="520" height="84" rx="26"/>
-  <text class="label-light" x="620" y="861">DidEndDecelerating</text>
-
-  <polygon class="diamond diamond-blue" points="1010,794 1101,840 1010,886 919,840"/>
-  <text class="label-light" x="1010" y="848" font-size="22">touch</text>
-
-  <ellipse class="end end-fill" cx="620" cy="944" rx="110" ry="38"/>
-  <text class="label-light" x="620" y="954" font-size="26">End</text>
-
-  <text class="branch" x="648" y="555">YES</text>
-  <text class="branch" x="1066" y="515">NO</text>
-  <text class="branch" x="438" y="704">YES</text>
-  <text class="branch" x="656" y="786">NO</text>
-  <text class="branch" x="822" y="823">YES</text>
-  <text class="branch" x="1038" y="915">NO</text>
+  <path class="flow" d="M 320 110 H 364"/>
+  <path class="flow" d="M 968 840 H 888"/>
+  <path class="flow" d="M 860 916 H 808"/>
+  <path class="flow" d="M 622 884 V 901"/>
 </svg>
