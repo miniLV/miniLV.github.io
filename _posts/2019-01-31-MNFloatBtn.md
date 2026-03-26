@@ -151,27 +151,27 @@ pod 'MNFloatBtn'
 #import <MNFloatBtn/MNFloatBtn.h>
 ```
 
----
-- 如果希望悬浮按钮在任何环境下都显示，可以直接调用：
-```
+如果希望悬浮按钮在任何环境下都显示，可以直接调用：
+
+```objc
 [MNFloatBtn show];
 ```
-<br>
 
-- 更推荐在 Debug 环境中显示，避免影响线上包：
-```
+更推荐在 Debug 环境中显示，避免影响线上包：
+
+```objc
 [MNFloatBtn showDebugModeWithType:MNAssistiveTypeNone];
 ```
-<br>
 
-- 不再需要时，可以移除悬浮按钮：
-```
+不再需要时，可以移除悬浮按钮：
+
+```objc
 [MNFloatBtn hidden];
 ```
 
-- 也可以为按钮补充点击事件：
+也可以为按钮补充点击事件：
 
-``` 
+```objc
 [MNFloatBtn sharedBtn].btnClick = ^(UIButton *sender) {
 
     NSLog(@"btn.btnClick ~");
@@ -179,15 +179,15 @@ pod 'MNFloatBtn'
 };
 ```
 
-- 如果希望按钮上默认展示当前构建日期，可以这样设置：
-```
+如果希望按钮上默认展示当前构建日期，可以这样设置：
+
+```objc
 [[MNFloatBtn sharedBtn] setBuildShowDate:YES];
 ```
 
-- 如果项目区分测试、开发、生产等 API 环境，也可以直接配置环境映射：
+如果项目区分测试、开发、生产等 API 环境，也可以直接配置环境映射：
 
-```
-
+```objc
 #define kAddress            @"testapi.miniLV.com"
 //#define kAddress            @"devapi.miniLV.com"
 //#define kAddress            @"api.miniLV.com"
