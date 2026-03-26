@@ -55,50 +55,53 @@ tags:
 #### 问题所在:
 如上设置，如果我们cell一行有20行，页面启动的时候，直接滑动到最底部，20个cell都进入过了界面，`- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath` 被调用了20次，不符合 `需求1`的要求
 
-解决办法:
-1. `cell`每次被渲染时，判断当前`tableView`是否处于滚动状态，是的话，不加载图片；
-2. `cell` 滚动结束的时候，获取当前界面内可见的所有`cell`
-3. 在`2`的基础之上，让所有的`cell`请求图片数据，并显示出来
+解决思路:
+1. `cell` 每次被渲染时，先判断当前 `tableView` 是否处于滚动状态，如果正在滚动，就先不加载图片。
+2. 滚动结束后，拿到当前界面内所有可见的 `cell`。
+3. 基于可见 `cell` 再统一触发图片请求和显示。
 
-- 步骤1:
-```
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
+步骤 1：在 `cellForRowAtIndexPath:` 中根据滚动状态决定是否触发图片加载。
+
+```objc
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell"];
     if (!cell) {
-        cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell"];
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell"];
     }
     
     DemoModel *model = self.datas[indexPath.row];
     cell.textLabel.text = model.text;
    
-    //不在直接让cell.imageView loadYYWebImage
+    // 不再直接让 cell.imageView 使用 YYWebImage 加载
     if (model.iconImage) {
         cell.imageView.image = model.iconImage;
-    }else{
+    } else {
         cell.imageView.image = [UIImage imageNamed:@"placeholder"];
         
-        //核心判断：tableView非滚动状态下，才进行图片下载并渲染
+        // 核心判断：tableView 非滚动状态下，才进行图片下载和渲染
         if (!tableView.dragging && !tableView.decelerating) {
-            //下载图片数据 - 并缓存
             [ImageDownload loadImageWithModel:model success:^{
-                
-                //主线程刷新UI
                 dispatch_async(dispatch_get_main_queue(), ^{
                     cell.imageView.image = model.iconImage;
                 });
             }];
         }
+    }
+    
+    return cell;
 }
 ```
-- 步骤2:
-```
-- (void)p_loadImage{
 
-    //拿到界面内-所有的cell的indexpath
-    NSArray *visableCellIndexPaths = self.tableView.indexPathsForVisibleRows;
+步骤 2：滚动结束后，拿到当前页面内所有可见的 `cell`，再补发图片请求。
 
-    for (NSIndexPath *indexPath in visableCellIndexPaths) {
+```objc
+- (void)p_loadImage {
+
+    // 拿到当前界面内所有可见 cell 的 indexPath
+    NSArray *visibleCellIndexPaths = self.tableView.indexPathsForVisibleRows;
+
+    for (NSIndexPath *indexPath in visibleCellIndexPaths) {
 
         DemoModel *model = self.datas[indexPath.row];
 
@@ -109,40 +112,40 @@ tags:
         UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
 
         [ImageDownload loadImageWithModel:model success:^{
-            //主线程刷新UI
             dispatch_async(dispatch_get_main_queue(), ^{
- 
                 cell.imageView.image = model.iconImage;
             });
         }];
     }
 }
 ```
-- 步骤3:
 
-```
-//手一直在拖拽控件
-- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView{
+步骤 3：在滚动代理方法里统一触发 `p_loadImage`。
+
+```objc
+// 手一直在拖拽控件
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
 
     [self p_loadImage];
 }
 
-//手放开了-使用惯性-产生的动画效果
-- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate{
+// 手已经松开，判断是否还会继续减速滚动
+- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
 
-    if(!decelerate){
-        //直接停止-无动画
+    if (!decelerate) {
+        // 直接停止，没有惯性滚动
         [self p_loadImage];
-    }else{
-        //有惯性的-会走`scrollViewDidEndDecelerating`方法，这里不用设置
+    } else {
+        // 仍有惯性滚动，会在 scrollViewDidEndDecelerating: 中处理
     }
 }
 ```
-> `dragging`:`returns YES if user has started scrolling. this may require some time and or distance to move to initiate dragging`
-可以理解为，用户在拖拽当前视图滚动(手一直拉着)
 
-> `deceleratingreturns`:`returns YES if user isn't dragging (touch up) but scroll view is still moving`
-可以理解为用户手已放开，试图是否还在滚动(是否惯性效果)
+> `dragging`: `returns YES if user has started scrolling. this may require some time and or distance to move to initiate dragging`
+可以理解为，用户正在拖拽当前视图滚动，也就是手还没有离开屏幕。
+
+> `decelerating`: `returns YES if user isn't dragging (touch up) but scroll view is still moving`
+可以理解为，用户手已经放开，但视图仍然在滚动，也就是惯性滚动阶段。
 
 ##### ScrollView一次拖拽的代理方法执行流程:
 ![ScrollView流程图.png](https://github.com/miniLV/github_images_miniLV/blob/master/juejin/167b5cc01a0084b9?raw=true)
@@ -153,44 +156,45 @@ tags:
 ![demo.gif](https://github.com/miniLV/github_images_miniLV/blob/master/juejin/167b5cc01a628414?raw=true)
 
 
-#### RunLoop小操作
-```
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
+#### RunLoop 方案
+```objc
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell"];
     if (!cell) {
-        cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell"];
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell"];
     }
     
     DemoModel *model = self.datas[indexPath.row];
     cell.textLabel.text = model.text;
-   
     
     if (model.iconImage) {
         cell.imageView.image = model.iconImage;
-    }else{
+    } else {
         cell.imageView.image = [UIImage imageNamed:@"placeholder"];
 
         /**
-         runloop - 滚动时候 - trackingMode，
-         - 默认情况 - defaultRunLoopMode
-         ==> 滚动的时候，进入`trackingMode`，defaultMode下的任务会暂停
-         停止滚动的时候 - 进入`defaultMode` - 继续执行`trackingMode`下的任务 - 例如这里的loadImage
+         RunLoop 在滚动时会进入 UITrackingRunLoopMode，
+         默认状态下执行的是 NSDefaultRunLoopMode。
+         因此把任务放进 NSDefaultRunLoopMode 后，滚动期间会暂停，
+         停止滚动后再继续执行。
          */
         [self performSelector:@selector(p_loadImgeWithIndexPath:)
                    withObject:indexPath
                    afterDelay:0.0
                       inModes:@[NSDefaultRunLoopMode]];
+    }
+
+    return cell;
 }
 
-//下载图片，并渲染到cell上显示
-- (void)p_loadImgeWithIndexPath:(NSIndexPath *)indexPath{
+// 下载图片，并渲染到 cell 上显示
+- (void)p_loadImgeWithIndexPath:(NSIndexPath *)indexPath {
     
     DemoModel *model = self.datas[indexPath.row];
     UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
     
     [ImageDownload loadImageWithModel:model success:^{
-        //主线程刷新UI
         dispatch_async(dispatch_get_main_queue(), ^{
             cell.imageView.image = model.iconImage;
         });
@@ -199,17 +203,18 @@ tags:
 ```
 效果与`demo.gif`的效果一致
 
-> runloop - 两种常用模式介绍:   `trackingMode` && `defaultRunLoopMode`
-> - 默认情况 - defaultRunLoopMode
-> - 滚动时候 - trackingMode
-> - 滚动的时候，进入`trackingMode`,导致`defaultMode`下的任务会被暂停,停止滚动的时候 ==> 进入`defaultMode` - 继续执行`defaultMode`下的任务 - 例如这里的`defaultMode`
+> RunLoop 两种常见模式：
+> - 默认状态下是 `NSDefaultRunLoopMode`
+> - 滚动过程中会切换到 `UITrackingRunLoopMode`
+> - 因此放在 `NSDefaultRunLoopMode` 中的任务，会在滚动期间暂停，在停止滚动后继续执行
 
-> 大tips:这里，如果使用RunLoop，滚动的时候虽然不执行`defaultMode`，但是滚动一结束，之前cell中的`p_loadImgeWithIndexPath`就会全部再被调用，导致类似`YYWebImage`的效果，其实也是不满足需求,
-- 提示会被调用的代码如下:
-```
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
+不过这里有一个明显问题：如果使用 RunLoop，滚动期间虽然不会执行 `NSDefaultRunLoopMode` 下的任务，但滚动一结束，之前积压的 `p_loadImgeWithIndexPath` 会被统一触发，最终效果会很接近 `YYWebImage` 默认行为，依然不满足需求。
+
+会被重新触发的代码如下：
+```objc
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    //p_loadImgeWithIndexPath一进入`NSDefaultRunLoopMode`就会执行
+    // p_loadImgeWithIndexPath 一进入 NSDefaultRunLoopMode 就会执行
     [self performSelector:@selector(p_loadImgeWithIndexPath:)
                withObject:indexPath
                afterDelay:0.0
