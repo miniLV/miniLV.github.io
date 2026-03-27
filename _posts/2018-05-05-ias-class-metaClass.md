@@ -242,7 +242,7 @@ size_t instanceSize(size_t extraBytes) {
 ```
 > - `extraBytes` 一般都是 0，这里可以理解为 `size = alignedInstanceSize()`；
 > - `alignedInstanceSize = class_getInstanceSize`, `class_getInstanceSize` 由上图的log信息也可以知道 = `24`
-> - 内心os: who tm fucking 32?
+> - 那 32 到底是怎么来的？
 
 
 ![image](https://github.com/miniLV/github_images_miniLV/blob/master/juejin/16fd02b57307f931?raw=true)
@@ -288,7 +288,7 @@ malloc_zone_calloc(malloc_zone_t *zone, size_t num_items, size_t size)
 
 ```
 
-内心os: exo me? 这传入的 `size_t size = 24`,怎么返回32的？？
+问题来了：传入的 `size_t size = 24`，怎么返回 32？
 
 #### 涉及到 - 内存对齐
 
