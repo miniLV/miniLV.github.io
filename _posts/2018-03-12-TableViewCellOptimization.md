@@ -284,7 +284,6 @@ tags:
 <br>
 
 ### 话外篇:面试题赠送
-*最近网上各种互联网公司裁员信息铺天盖地，甚至包括各种一线公司 ( X东 X乎 都扛不住了吗-。-)iOS本来就是提前进入寒冬，iOS小白们可以尝试思考下这个问题*
 
 #### 问：UITableView的圆角性能优化如何实现
 答:
@@ -316,11 +315,6 @@ manager.sharedTransformBlock = ^(UIImage *image, NSURL *url) {
 ```
 
 *`SDWebImage`同理，它有暴露了一个方法出来，可以直接设置保存图片到磁盘中，无需修改源码*
-
->“winner is coming”,如果面试正好遇到以上问题的，请叫我雷锋~
-衷心希望各位iOS小伙伴门能熬过这个冬天？
-
-<br>
 
 [Demo源码](https://github.com/miniLV/TableViewCellOptimization)
 <br>
