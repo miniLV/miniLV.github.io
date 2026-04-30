@@ -4,7 +4,7 @@ title:      "萌新iOS面试官迷你厂第一视角"
 subtitle:   "初级面试官的第一视角"
 date:       2019-12-29 12:00:00
 author:     "miniLV"
-header-img: "img/post-bg-2015.jpg"
+header-img: "img/headers/2019-12-29-interviewer.png"
 tags:
     - 面试
 ---

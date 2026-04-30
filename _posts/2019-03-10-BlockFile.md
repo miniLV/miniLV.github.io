@@ -4,7 +4,7 @@ title:      "面试驱动技术 - Block详解"
 subtitle:   "Block常见考点"
 date:       2019-02-27 12:00:00
 author:     "miniLV"
-header-img: "img/post-bg-2015.jpg"
+header-img: "img/headers/2019-03-10-block.png"
 tags:
     - 面试
 ---

@@ -4,7 +4,7 @@ title:      "一道高级iOS面试题(runtime方向)"
 subtitle:   "runtime变态考题"
 date:       2019-03-27 23:00:00
 author:     "miniLV"
-header-img: "img/post-bg-2015.jpg"
+header-img: "img/headers/2019-03-27-runtime-interview.png"
 tags:
     - 面试
 ---
