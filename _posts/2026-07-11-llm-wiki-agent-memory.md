@@ -2,7 +2,7 @@
 layout:     post
 title:      "给 AI Agent 一个本地自我进化的知识库"
 subtitle:   "把每天的对话变成下一次还能用的工程经验"
-date:       2026-07-11 12:00:00
+date:       2026-07-10 12:00:00
 author:     "miniLV"
 header-img: "img/post-bg-2015.jpg"
 summary:    "LLM Wiki Agent Memory 把本机的 Codex、Claude Code 会话整理成可查询、可审查的 Markdown Wiki，让 Agent 从过去的工作中积累经验。"
