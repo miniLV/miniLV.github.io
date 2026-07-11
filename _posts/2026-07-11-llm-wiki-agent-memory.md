@@ -4,7 +4,7 @@ title:      "给 AI Agent 一个本地自我进化的知识库"
 subtitle:   "把每天的对话变成下一次还能用的工程经验"
 date:       2026-07-10 12:00:00
 author:     "miniLV"
-header-img: "img/post-bg-2015.jpg"
+header-img: "img/in-post/llm-wiki-agent-memory/agent-memory-arch-sketch.png"
 summary:    "LLM Wiki Agent Memory 把本机的 Codex、Claude Code 会话整理成可查询、可审查的 Markdown Wiki，让 Agent 从过去的工作中积累经验。"
 tags:
     - AI
@@ -50,8 +50,6 @@ Agent 对话
 这样形成的不是一个只进不出的聊天仓库。Agent 每完成一些工作，知识库就多一点事实；经过 Review，又多一点可信经验；下一次遇到相似问题时，这些经验再回到新的对话里。
 
 这里的“自我进化”不是让模型自己修改规则，而是从真实完成的工作里积累证据，经过复查后再谨慎复用。
-
-![LLM Wiki Agent Memory 架构图](/img/in-post/llm-wiki-agent-memory/agent-memory-arch-sketch.png)
 
 <br>
 
