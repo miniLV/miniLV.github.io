@@ -4,6 +4,7 @@ title: "Codex Auto Router"
 subtitle: "多 Agent 协作的可验证、可恢复静态协议"
 date: 2026-08-03 00:00:00 +0800
 author: "miniLV"
+header-img: "img/headers/2026-08-03-codex-auto-router-v2-1.png"
 summary: "让 Root 只把边界清晰、可验证、可恢复的工作单元交给一个背景 Agent。"
 tags:
     - Codex
@@ -85,9 +86,6 @@ Luna 失败或结果不可验证时，恢复固定为四步：
 Root 负责解释用户意图、制定计划、决定是否委派、确认授权、声明 ownership、执行外部动作、整合结果、最终验证和交付。Worker 只在独占路径内执行；它的输出是证据，不是自动生效的状态。Root 比对 diff 与 baseline，只采纳已验证结果，其他全部恢复。
 
 ## Terra：初次执行，最多两次 focused repair
-
-[![Terra 初次执行、同一 Worker 修复与 Root 接管](/img/in-post/codex-auto-router/terra-repair-flow.jpg)](/img/in-post/codex-auto-router/terra-repair-flow.jpg)
-*Terra 失败时留在同一 Worker，修复次数有上限。*
 
 Terra 先在 fresh context 执行初始 Packet；Root 验证证据、Diff、测试和路径所有权。若只是明确的 focused 缺口，允许同一 Worker、同一 tuple 最多两次 repair follow-up。任意方向错误、越界、不可验证，或两次修复仍未通过，Root 解决路径并接管，不再创建新的 Terra。
 
