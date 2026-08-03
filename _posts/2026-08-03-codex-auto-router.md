@@ -4,7 +4,7 @@ title: "Codex Auto Router"
 subtitle: "不用手动切模型：按任务边界自动路由到 Sol、Luna 或 Terra"
 date: 2026-08-03 00:00:00 +0800
 author: "miniLV"
-header-img: "img/headers/2026-08-03-codex-auto-router-v2-1.png"
+header-img: "img/headers/2026-08-03-codex-auto-router.png"
 summary: "一次配置，按任务复杂度、风险和可验证性自动选择合适的执行模型。"
 tags:
     - Codex
