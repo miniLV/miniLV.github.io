@@ -14,9 +14,20 @@ tags:
     - 软件架构
 ---
 
-用 Sol 做每一件事，通常最省心，也最贵。把日志扫描、单测补齐这类低风险工作交给 Luna，成本会下来；但边界没想清楚就把修复任务扔过去，省下来的额度很快会在返工里吐回去。至于什么时候该切到 Terra，很多时候又只能靠人盯着任务临场判断。
+现在的 GPT 模型越来越能做复杂工作，单次调用的价格也随之拉开差距。对一段需要理解业务、判断风险、整合结果的任务，直接用最强模型当然最省心；但把同一档能力用在日志扫描、单测补齐这类可机械验收的小事上，长期看并不划算。
+
+这也是这套路由里 Sol、Luna 和 Terra 分工的背景：Sol 是承担高判断工作的 Root；Luna 处理被严格收窄的低风险单元；Terra 则处理其余已经通过边界与验收检查的有界执行。用 Sol 做每一件事，通常最省心，也最贵。把日志扫描、单测补齐这类工作交给 Luna，成本会下来；但边界没想清楚就把修复任务扔过去，省下来的额度很快会在返工里吐回去。至于什么时候该切到 Terra，很多时候又只能靠人盯着任务临场判断。
 
 这就是手动切模型最烦的地方：每接一个任务，都要在成本、质量和上下文之间重新做一遍选择。任务一多，切换本身就成了新的工作。
+
+## 同一代模型，预算不该只换来一种能力
+
+这不是“便宜模型一定更划算”的简单命题，而是同一代模型已经给出了足够大的成本台阶。按 API 的每百万 token 标价，Sol 是输入 $5、输出 $30；Terra 是 $2.50 / $15，约为 Sol 的一半；Luna 是 $1 / $6，约为 Sol 的五分之一。对按量付费的团队而言，把能机械验收的工作交给 Terra 或 Luna，意味着同一笔 token 预算可以覆盖更多轮实际工作。对于订阅制 Codex，这不等于官方额度会按这组价格线性换算，但同样避免了把最高档能力浪费在不需要它的地方。
+
+[![Artificial Analysis：GPT-5.6 的智能与单任务成本](https://cdn.sanity.io/images/6vfeftx9/articles/2952e52c91532cf24a8bfb3d8f823f4a9635bdfc-4640x4704.png?w=1200&auto=format)](https://artificialanalysis.ai/articles/gpt-5-6-has-landed/)
+*智能与单任务成本的关系：Sol、Terra、Luna 提供不同的能力/成本位置；图表版权归 [Artificial Analysis](https://artificialanalysis.ai/articles/gpt-5-6-has-landed/)，点击查看原图与方法。*
+
+这也是本文把 Luna 的范围收得很窄、而不是把它当“默认便宜 Worker”的原因：便宜只有在任务边界、验证和恢复路径都成立时，才会真的让 token 更耐用；否则一次返工足以吃掉前面的节省。Terra 的位置则更适合已经通过同样检查、但不属于 Luna 两项白名单的有界执行工作。
 
 Codex Auto Router 的核心价值，是把这件事变成一次配置后的自动判断。它不靠一个黑盒“复杂度分数”硬猜，而是同时看任务是否能安全拆分、范围是否明确、结果能不能机械验收、失败后有没有恢复路径：可被严格收窄的日志读取和测试写入交给 Luna；其余通过检查的有界执行单元交给 Terra；只要有不确定，就让 Root 留在 Sol 直接完成。
 
@@ -111,4 +122,4 @@ Terra 处理其余通过检查的 bounded 单元。它先在 fresh context 执�
 
 我更看重的也正是这点：自动路由的价值，不是让更多任务离开 Root，而是让每一次离开都有边界、有基线，也有回来的路。
 
-完整实现、策略文档和测试都在 [GitHub 项目（当前私有）](https://github.com/miniLV/codex-auto-router)。
+完整实现、策略文档和测试都在 [GitHub 项目（当前私有）](https://github.com/miniLV/codex-auto-router)。延伸阅读：[Artificial Analysis 对 GPT-5.6 的 Intelligence、Speed 与 Cost 分析](https://artificialanalysis.ai/articles/gpt-5-6-has-landed/)。
