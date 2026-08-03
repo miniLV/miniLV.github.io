@@ -1,0 +1,3 @@
+[submodule "img/MNResume"]
+	path = img/MNResume
+	url = https://github.com/miniLV/MNResume.git
