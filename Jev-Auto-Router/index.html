@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Jev Auto Router - Codex per-call GPT model routing with TypeSafe Jev</title>
+    <meta
+      name="description"
+      content="Jev Auto Router is an experimental Codex model router: TypeSafe Jev chooses model and reasoning effort per call, a local Responses proxy keeps the session continuous, and independent verification plus Router Compass check the finished task."
+    />
+    <meta
+      name="keywords"
+      content="Codex model router, Jev TypeSafe, per-call routing, independent verification, Router Compass, GPT model routing, Codex CLI"
+    />
+    <link rel="canonical" href="https://minilv.github.io/Jev-Auto-Router/" />
+    <meta property="og:title" content="Jev Auto Router - Codex per-call GPT model routing" />
+    <meta
+      property="og:description"
+      content="TypeSafe Jev chooses model + reasoning effort for each Codex call. Local Responses proxy. Independent verification. Router Compass. Validation prototype."
+    />
+    <meta property="og:url" content="https://minilv.github.io/Jev-Auto-Router/" />
+    <meta property="og:type" content="website" />
+    <meta
+      property="og:image"
+      content="https://raw.githubusercontent.com/miniLV/Jev-Auto-Router/master/docs/assets/jev-auto-router-sketchboard-en.png"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="stylesheet" href="./styles.css" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "Jev Auto Router",
+        "alternateName": ["Jev Router", "Jev Auto Router for Codex"],
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "macOS, Linux",
+        "description": "Experimental per-call GPT model router for Codex: TypeSafe Jev chooses model and reasoning effort, a local Responses proxy keeps the session continuous, and independent verification plus Router Compass evaluate the finished task.",
+        "url": "https://minilv.github.io/Jev-Auto-Router/",
+        "codeRepository": "https://github.com/miniLV/Jev-Auto-Router",
+        "license": "https://www.apache.org/licenses/LICENSE-2.0",
+        "author": {
+          "@type": "Person",
+          "name": "miniLV",
+          "url": "https://github.com/miniLV"
+        },
+        "keywords": [
+          "Codex model router",
+          "Jev TypeSafe",
+          "per-call routing",
+          "independent verification",
+          "Router Compass"
+        ]
+      }
+    </script>
+  </head>
+  <body>
+    <header class="hero">
+      <div class="wrap hero-content">
+        <p class="eyebrow">Jev Auto Router</p>
+        <div class="badge">Validation prototype · architecture approved</div>
+        <h1>Per-call GPT model routing for Codex.</h1>
+        <p class="lead">
+          TypeSafe Jev chooses the model and reasoning effort for each call. A local Responses
+          proxy keeps the Codex session and tool loop continuous. Independent verification checks
+          the finished task. Router Compass puts route, usage, and acceptance in one place.
+        </p>
+        <div class="actions">
+          <a class="button primary" href="https://github.com/miniLV/Jev-Auto-Router">View on GitHub</a>
+          <a class="button secondary" href="https://github.com/miniLV/Jev-Auto-Router#readme">Read the README</a>
+          <a class="button secondary" href="./guides.html">Browse guides</a>
+        </div>
+        <div class="status-note">
+          Honest status: architecture is set; runtime is still a validation prototype. Cross-model
+          switching in a real Codex tool loop, the full verification path, and savings have not
+          been proven end to end. This is not an install-and-auto-route promise.
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section>
+        <div class="wrap">
+          <p class="section-kicker">Why per call</p>
+          <h2>Hard reasoning and routine follow-ups do not need the same model.</h2>
+          <div class="grid">
+            <article class="card">
+              <strong>One Choice per meaningful call</strong>
+              <p>
+                Jev selects model and effort together over host-supported pairs. Local code adds no
+                task-kind table or second semantic router.
+              </p>
+            </article>
+            <article class="card">
+              <strong>Same Codex session</strong>
+              <p>
+                The local Responses proxy preserves session continuity and the tool loop while the
+                route can change call by call.
+              </p>
+            </article>
+            <article class="card">
+              <strong>Independent verification</strong>
+              <p>
+                Task completion is checked against the original request. The executing model's claim
+                of success is not evidence.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="wrap product">
+          <div class="product-copy">
+            <p class="section-kicker">Architecture</p>
+            <h2>Codex call → local proxy → Jev Choice → Responses → task verification.</h2>
+            <p>
+              The proxy builds only the `(model, reasoning effort)` pairs the host can actually
+              request. Jev makes one Choice. An execution guard validates ALLOW or DENY. Native
+              Responses keeps streaming, tool IDs, and continuation intact. After the task,
+              verification and Router Compass connect route choices to real usage and acceptance.
+            </p>
+          </div>
+          <img
+            src="https://raw.githubusercontent.com/miniLV/Jev-Auto-Router/master/docs/assets/jev-auto-router-sketchboard-en.png"
+            alt="Jev Auto Router per-call architecture: Codex session through local proxy, Jev, execution guard, native Responses, and independent verification"
+            loading="lazy"
+          />
+        </div>
+      </section>
+
+      <section>
+        <div class="wrap">
+          <p class="section-kicker">Capability tiers</p>
+          <h2>Four tiers. GPT-6 stays scarce by default.</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Tier</th>
+                <th>Typical role</th>
+                <th>Ordinary calls</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Luna Max</strong></td>
+                <td>Explicit, mechanical follow-up steps</td>
+                <td>Eligible</td>
+              </tr>
+              <tr>
+                <td><strong>Terra</strong></td>
+                <td>Everyday work and the fallback baseline</td>
+                <td>Eligible</td>
+              </tr>
+              <tr>
+                <td><strong>Sol</strong></td>
+                <td>Harder reasoning, implementation, and correction</td>
+                <td>Eligible</td>
+              </tr>
+              <tr>
+                <td><strong>GPT-6</strong></td>
+                <td>Scarce escalation supported by evidence</td>
+                <td>Ineligible by default</td>
+              </tr>
+            </tbody>
+          </table>
+          <ul>
+            <li>Fallback default is Terra/medium with a recorded reason.</li>
+            <li>Turning the router off restores the host's original model.</li>
+            <li>Tier names must match pairs the host actually supports.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <div class="wrap">
+          <p class="section-kicker">Needs</p>
+          <h2>What you need before any live routing experiment.</h2>
+          <div class="split">
+            <article class="card">
+              <strong>TypeSafe / Jev API key</strong>
+              <p>
+                The proxy reads <code>JEV_API_KEY</code>. TypeSafe examples use
+                <code>TYPESAFE_API_KEY</code>; both can hold the same key. Never commit secrets.
+              </p>
+            </article>
+            <article class="card">
+              <strong>Local host stack</strong>
+              <p>
+                Node.js 22+, a signed-in Codex CLI, and access to the model and reasoning-effort
+                pairs you want to route. A Jev key alone is not enough.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="final">
+        <div class="wrap">
+          <p class="section-kicker" style="color: var(--green)">Guides</p>
+          <h2>Search-oriented how-tos for Codex model routing.</h2>
+          <p>
+            Short technical pages for the queries people actually search: per-call routing,
+            verification, and a Chinese-language walkthrough of the same design.
+          </p>
+          <div class="guides">
+            <article class="guide-card">
+              <strong>How to route Codex GPT models per call with Jev</strong>
+              <p>Why per-call routing exists, what Jev chooses, and what the local proxy preserves.</p>
+              <a href="./how-to-route-codex-gpt-models-per-call-with-jev.html">Read the guide</a>
+            </article>
+            <article class="guide-card">
+              <strong>How Codex model routing verification works</strong>
+              <p>Independent acceptance, Router Compass evidence, and why savings are not assumed.</p>
+              <a href="./how-codex-model-routing-verification-works.html">Read the guide</a>
+            </article>
+            <article class="guide-card">
+              <strong>用 Jev 做 Codex 逐调用模型路由（中文）</strong>
+              <p>面向中文社区讲清逐调用架构、前置条件和当前原型边界。</p>
+              <a href="./how-to-use-jev-for-codex-model-routing-zh.html">阅读指南</a>
+            </article>
+            <article class="guide-card">
+              <strong>All guides</strong>
+              <p>Browse the full collection from one index page.</p>
+              <a href="./guides.html">Open guides hub</a>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="wrap">
+          <p class="section-kicker">Try the source</p>
+          <h2>Prototype code is open. Production routing is not claimed yet.</h2>
+          <p class="feature-copy" style="margin-top: 18px; max-width: 760px">
+            Local development validates the current proxy, routing decisions, verification, and
+            Compass structures with <code>npm ci</code>, <code>npm test</code>, and
+            <code>npm run typecheck</code>. Those commands do not connect Codex to a production
+            proxy. License: Apache-2.0.
+          </p>
+          <div class="actions" style="margin-top: 28px">
+            <a class="button primary" href="https://github.com/miniLV/Jev-Auto-Router">Star on GitHub</a>
+            <a
+              class="button secondary"
+              href="https://github.com/miniLV/Jev-Auto-Router/blob/master/docs/adr/0017-per-call-responses-routing.md"
+              >Read ADR 0017</a
+            >
+            <a class="button secondary" href="https://minilv.github.io/2026/09/18/codex-auto-router/"
+              >Blog write-up</a
+            >
+            <a class="button secondary" href="https://juejin.cn/spost/7687015527131168783">掘金</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="wrap">
+        <div>Jev Auto Router · Apache-2.0 · experimental Codex model router</div>
+        <div>
+          <a href="https://github.com/miniLV/Jev-Auto-Router">GitHub</a>
+          ·
+          <a href="./guides.html">Guides</a>
+          ·
+          <a href="https://minilv.github.io/">Blog</a>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
