@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>How Codex model routing verification works | Jev Auto Router</title>
+    <meta
+      name="description"
+      content="How Jev Auto Router verifies Codex model routing: independent task acceptance, Router Compass evidence for route and usage, and why savings are not assumed."
+    />
+    <meta
+      name="keywords"
+      content="Codex model router, independent verification, Router Compass, per-call routing, Jev TypeSafe"
+    />
+    <link
+      rel="canonical"
+      href="https://minilv.github.io/Jev-Auto-Router/how-codex-model-routing-verification-works.html"
+    />
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #0f1115;
+        --surface: #171a21;
+        --surface-2: #20252e;
+        --text: #f3f1eb;
+        --muted: #b9b6ad;
+        --line: #333946;
+        --green: #76b782;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+      }
+      a { color: #c8facc; }
+      .wrap { width: min(100vw - 40px, 860px); margin: 0 auto; }
+      header {
+        padding: 72px 0 40px;
+        border-bottom: 1px solid var(--line);
+        background: linear-gradient(180deg, rgba(15, 17, 21, 0.98), rgba(15, 17, 21, 0.92));
+      }
+      .eyebrow {
+        margin: 0 0 12px;
+        color: var(--green);
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+      h1, h2 { line-height: 1.15; }
+      h1 { margin: 0 0 18px; font-size: clamp(36px, 6vw, 54px); }
+      h2 { margin: 40px 0 14px; font-size: 28px; }
+      p, li { color: var(--muted); font-size: 18px; }
+      main { padding: 40px 0 72px; }
+      .lede { font-size: 20px; }
+      .panel {
+        margin: 28px 0;
+        padding: 24px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface);
+      }
+      .panel strong { color: var(--text); }
+      table {
+        width: 100%;
+        margin: 24px 0;
+        border-collapse: collapse;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        overflow: hidden;
+      }
+      th, td {
+        padding: 14px 16px;
+        border-bottom: 1px solid var(--line);
+        text-align: left;
+        vertical-align: top;
+        font-size: 16px;
+      }
+      th { background: var(--surface-2); color: var(--text); }
+      td { color: var(--muted); }
+      tr:last-child td { border-bottom: none; }
+      .actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 28px; }
+      .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 46px;
+        padding: 0 18px;
+        border-radius: 8px;
+        border: 1px solid var(--line);
+        background: var(--surface-2);
+        color: var(--text);
+        text-decoration: none;
+        font-weight: 600;
+      }
+      .button.primary {
+        background: var(--green);
+        border-color: var(--green);
+        color: #101310;
+      }
+      footer {
+        padding: 28px 0 48px;
+        border-top: 1px solid var(--line);
+        color: var(--muted);
+      }
+      @media (max-width: 640px) {
+        p, li { font-size: 17px; }
+        .actions { flex-direction: column; }
+        .button { width: 100%; }
+      }
+    </style>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "TechArticle",
+        "headline": "How Codex model routing verification works",
+        "description": "How independent verification and Router Compass evaluate Codex per-call model routing without assuming savings.",
+        "author": { "@type": "Person", "name": "miniLV" },
+        "publisher": { "@type": "Organization", "name": "Jev Auto Router" },
+        "mainEntityOfPage": "https://minilv.github.io/Jev-Auto-Router/how-codex-model-routing-verification-works.html"
+      }
+    </script>
+  </head>
+  <body>
+    <header>
+      <div class="wrap">
+        <p class="eyebrow">Jev Auto Router Guide</p>
+        <h1>How Codex model routing verification works</h1>
+        <p class="lede">
+          A good route does not prove the task is done. Jev Auto Router separates per-call model Choice
+          from independent task acceptance, then joins both in Router Compass.
+        </p>
+      </div>
+    </header>
+    <main>
+      <div class="wrap">
+        <p>
+          After Codex finishes a task boundary, independent verification checks the original request
+          against the diff, tests, run results, and any needed semantic judgment. The executing model's
+          claim of success is not evidence. Verification uses a fixed tier outside the economic routing loop.
+        </p>
+
+        <div class="panel">
+          <strong>What verification asks.</strong>
+          <p style="margin: 12px 0 0">
+            Did using less frontier capacity still complete the task correctly, and did the full delivery
+            cost — including Jev, corrections, and cache effects — actually go down?
+          </p>
+        </div>
+
+        <h2>Failure returns to the same session</h2>
+        <ul>
+          <li>Specific failure facts return to the same Codex session for correction.</li>
+          <li>Default is at most two correction cycles, then Root takes over.</li>
+          <li>Repeated defects, permission issues, or scope blowups can escalate earlier.</li>
+        </ul>
+
+        <h2>What Router Compass records</h2>
+        <p>
+          Router Compass links each call's Jev Choice to the actual model and effort, usage, cache
+          behavior, latency, and fallback reason, then associates those facts with the task's
+          verification result.
+        </p>
+        <ul>
+          <li>Unknown usage stays <code>UNKNOWN</code>, never zero.</li>
+          <li>Model switches can lose prompt-cache reuse, so cost must be measured.</li>
+          <li>Historical replay can estimate counterfactual prices; it does not prove quality.</li>
+        </ul>
+
+        <h2>Evidence levels</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Evidence</th>
+              <th>What it can establish</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Production observation</td>
+              <td>Actual model mix, usage, and task verification</td>
+            </tr>
+            <tr>
+              <td>Historical replay</td>
+              <td>Estimated prices under explicit assumptions — a counterfactual, not quality proof</td>
+            </tr>
+            <tr>
+              <td>Fixed-Terra control</td>
+              <td>Whether equivalent acceptance and complete accounting show real savings with maintained quality</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h2>P0 gate before any savings claim</h2>
+        <p>
+          The project does not claim general savings or automatic routing after installation until a
+          real Codex CLI A→B→A switch within one tool loop passes across the four tiers, covering
+          authentication, actual model and effort, tool-call IDs, streaming events, cancellation,
+          continuation, and compaction — plus a controlled comparison.
+        </p>
+
+        <h2>Related guides</h2>
+        <ul>
+          <li><a href="./how-to-route-codex-gpt-models-per-call-with-jev.html">How to route Codex GPT models per call with Jev</a></li>
+          <li><a href="./how-to-use-jev-for-codex-model-routing-zh.html">用 Jev 做 Codex 逐调用模型路由（中文）</a></li>
+          <li><a href="./guides.html">Browse all guides</a></li>
+        </ul>
+
+        <div class="actions">
+          <a class="button primary" href="https://github.com/miniLV/Jev-Auto-Router">View on GitHub</a>
+          <a class="button" href="./guides.html">All guides</a>
+          <a class="button" href="./">Homepage</a>
+        </div>
+      </div>
+    </main>
+    <footer>
+      <div class="wrap">
+        Jev Auto Router: independent verification and Router Compass for Codex model routing · Apache-2.0
+      </div>
+    </footer>
+  </body>
+</html>
