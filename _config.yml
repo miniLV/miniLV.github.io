@@ -12,6 +12,8 @@ paginate: 8
 paginate_path: "/page/:num/"
 plugins:
   - jekyll-paginate
+  - jekyll-redirect-from
+  - jekyll-sitemap
 
 markdown: kramdown
 highlighter: rouge
