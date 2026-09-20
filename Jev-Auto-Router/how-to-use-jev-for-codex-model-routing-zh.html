@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>用 Jev 做 Codex 逐调用模型路由｜Jev Auto Router</title>
+    <meta
+      name="description"
+      content="中文说明：Jev Auto Router 如何用 TypeSafe Jev 为 Codex 每次调用选择 GPT 模型与推理档位，本地 Responses 代理保持会话连续，任务结束后独立验收，并用 Router Compass 关联选路与用量。"
+    />
+    <meta
+      name="keywords"
+      content="Codex 模型路由, Jev TypeSafe, 逐调用路由, 独立验收, Router Compass, Codex CLI"
+    />
+    <link
+      rel="canonical"
+      href="https://minilv.github.io/Jev-Auto-Router/how-to-use-jev-for-codex-model-routing-zh.html"
+    />
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #0f1115;
+        --surface: #171a21;
+        --surface-2: #20252e;
+        --text: #f3f1eb;
+        --muted: #b9b6ad;
+        --line: #333946;
+        --green: #76b782;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Noto Sans SC", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.7;
+      }
+      a { color: #c8facc; }
+      .wrap { width: min(100vw - 40px, 860px); margin: 0 auto; }
+      header {
+        padding: 72px 0 40px;
+        border-bottom: 1px solid var(--line);
+        background: linear-gradient(180deg, rgba(15, 17, 21, 0.98), rgba(15, 17, 21, 0.92));
+      }
+      .eyebrow {
+        margin: 0 0 12px;
+        color: var(--green);
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+      h1, h2 { line-height: 1.2; }
+      h1 { margin: 0 0 18px; font-size: clamp(34px, 6vw, 50px); }
+      h2 { margin: 40px 0 14px; font-size: 26px; }
+      p, li { color: var(--muted); font-size: 18px; }
+      main { padding: 40px 0 72px; }
+      .lede { font-size: 20px; }
+      .panel {
+        margin: 28px 0;
+        padding: 24px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface);
+      }
+      .panel strong { color: var(--text); }
+      code, pre {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      }
+      pre {
+        overflow-x: auto;
+        padding: 18px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface);
+        color: #dce8de;
+      }
+      img {
+        width: 100%;
+        height: auto;
+        margin: 20px 0 10px;
+        border: 1px solid #d4cec1;
+        border-radius: 8px;
+        background: #111318;
+      }
+      .actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 28px; }
+      .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 46px;
+        padding: 0 18px;
+        border-radius: 8px;
+        border: 1px solid var(--line);
+        background: var(--surface-2);
+        color: var(--text);
+        text-decoration: none;
+        font-weight: 600;
+      }
+      .button.primary {
+        background: var(--green);
+        border-color: var(--green);
+        color: #101310;
+      }
+      footer {
+        padding: 28px 0 48px;
+        border-top: 1px solid var(--line);
+        color: var(--muted);
+      }
+      @media (max-width: 640px) {
+        p, li { font-size: 17px; }
+        .actions { flex-direction: column; }
+        .button { width: 100%; }
+      }
+    </style>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "TechArticle",
+        "inLanguage": "zh-CN",
+        "headline": "用 Jev 做 Codex 逐调用模型路由",
+        "description": "面向中文社区说明 Jev Auto Router 的逐调用 Codex GPT 模型路由、独立验收与当前原型边界。",
+        "author": { "@type": "Person", "name": "miniLV" },
+        "publisher": { "@type": "Organization", "name": "Jev Auto Router" },
+        "mainEntityOfPage": "https://minilv.github.io/Jev-Auto-Router/how-to-use-jev-for-codex-model-routing-zh.html"
+      }
+    </script>
+  </head>
+  <body>
+    <header>
+      <div class="wrap">
+        <p class="eyebrow">Jev Auto Router 中文指南</p>
+        <h1>用 Jev 做 Codex 逐调用模型路由</h1>
+        <p class="lede">
+          编码任务里，难题与例行步骤常常交替出现。Jev Auto Router 的目标是在同一个 Codex 会话中，
+          为每次有意义的模型调用选择合适的 GPT 模型与推理档位，并在任务结束后独立验收。
+        </p>
+      </div>
+    </header>
+    <main>
+      <div class="wrap">
+        <p>
+          这里的 <a href="https://docs.typesafe.ai/introduction">Jev</a> 来自 TypeSafe：对宿主当前确实可请求的
+          <code>(模型, reasoning effort)</code> 组合做一次 typed Choice。本地 Responses 代理负责保持会话与工具循环连续；
+          任务边界再做独立验收。Router Compass 把选路、实际用量和验收结果放在一起。
+        </p>
+
+        <div class="panel">
+          <strong>先说清楚状态。</strong>
+          <p style="margin: 12px 0 0">
+            架构已定，运行时仍是原型验证阶段。真实 Codex 工具循环中的跨模型切换、完整验收链和节省效果尚未端到端验证。
+            本文说明设计与前置条件，不是「安装后即可自动路由」的承诺，也不宣称普遍省钱。
+          </p>
+        </div>
+
+        <img
+          src="https://raw.githubusercontent.com/miniLV/Jev-Auto-Router/master/docs/assets/jev-auto-router-sketchboard.png"
+          alt="Jev Auto Router 逐调用架构示意图"
+          loading="lazy"
+        />
+
+        <h2>前置条件</h2>
+        <ul>
+          <li>TypeSafe 账号与 Jev API key（代理读取 <code>JEV_API_KEY</code>；也可与 <code>TYPESAFE_API_KEY</code> 设为同一密钥）。</li>
+          <li>Node.js 22+、已登录的 Codex CLI。</li>
+          <li>宿主实际可请求的模型与推理档位。</li>
+        </ul>
+        <p>只有 Jev 密钥，不足以运行真实的逐调用路由。</p>
+
+        <h2>一次调用怎么走</h2>
+        <ol>
+          <li><strong style="color: var(--text)">本地代理接住调用</strong>：检查路由是否关闭、是否为基础设施调用，并只列出宿主可请求的组合。</li>
+          <li><strong style="color: var(--text)">Jev 做唯一语义选择</strong>：一次 Choice 同时决定模型与档位。普通候选是 Luna Max、Terra、Sol；GPT-6 默认不可选。</li>
+          <li><strong style="color: var(--text)">执行门禁只校验</strong>：结果只有 ALLOW 或 DENY，不会偷偷改选。超时、低置信或无效回答回退到 Terra/medium，并留下原因。</li>
+          <li><strong style="color: var(--text)">原生 Responses 执行</strong>：保持 Codex 会话与工具循环；日志记录实际模型、档位、用量和回退原因。</li>
+        </ol>
+
+        <h2>路由正确 ≠ 任务完成</h2>
+        <p>
+          任务结束后的独立验收会对照原始需求检查改动、测试、运行结果和必要的语义结论；执行模型自报成功不算证据。
+          验收失败时，把具体失败事实送回同一会话纠错；默认最多两轮，之后由 Root 接管。验收本身使用固定档位，不参与节省型路由。
+        </p>
+
+        <h2>本地验证命令</h2>
+        <p>以下命令验证当前原型代码，不会建立 Codex 的生产代理连接：</p>
+        <pre>npm ci
+npm test
+npm run typecheck</pre>
+
+        <h2>相关链接</h2>
+        <ul>
+          <li><a href="./how-to-route-codex-gpt-models-per-call-with-jev.html">How to route Codex GPT models per call with Jev（英文）</a></li>
+          <li><a href="./how-codex-model-routing-verification-works.html">How Codex model routing verification works（英文）</a></li>
+          <li><a href="https://github.com/miniLV/Jev-Auto-Router">GitHub 仓库 README</a></li>
+          <li><a href="https://juejin.cn/spost/7687015527131168783">掘金相关文章</a></li>
+          <li><a href="./guides.html">全部指南</a></li>
+        </ul>
+
+        <div class="actions">
+          <a class="button primary" href="https://github.com/miniLV/Jev-Auto-Router">查看 GitHub</a>
+          <a class="button" href="./guides.html">全部指南</a>
+          <a class="button" href="./">返回首页</a>
+        </div>
+      </div>
+    </main>
+    <footer>
+      <div class="wrap">
+        Jev Auto Router：Codex 逐调用 GPT 模型路由原型 · Apache-2.0
+      </div>
+    </footer>
+  </body>
+</html>
