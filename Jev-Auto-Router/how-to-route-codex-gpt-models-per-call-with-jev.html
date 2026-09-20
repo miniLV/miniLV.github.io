@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>How to route Codex GPT models per call with Jev | Jev Auto Router</title>
+    <meta
+      name="description"
+      content="How Jev Auto Router uses TypeSafe Jev for per-call Codex GPT model routing: one Choice for model and reasoning effort, a local Responses proxy, and honest prototype limits."
+    />
+    <meta
+      name="keywords"
+      content="Codex model router, Jev TypeSafe, per-call routing, GPT model routing, Codex CLI"
+    />
+    <link
+      rel="canonical"
+      href="https://minilv.github.io/Jev-Auto-Router/how-to-route-codex-gpt-models-per-call-with-jev.html"
+    />
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #0f1115;
+        --surface: #171a21;
+        --surface-2: #20252e;
+        --text: #f3f1eb;
+        --muted: #b9b6ad;
+        --line: #333946;
+        --green: #76b782;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+      }
+      a { color: #c8facc; }
+      .wrap { width: min(100vw - 40px, 860px); margin: 0 auto; }
+      header {
+        padding: 72px 0 40px;
+        border-bottom: 1px solid var(--line);
+        background: linear-gradient(180deg, rgba(15, 17, 21, 0.98), rgba(15, 17, 21, 0.92));
+      }
+      .eyebrow {
+        margin: 0 0 12px;
+        color: var(--green);
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+      h1, h2 { line-height: 1.15; }
+      h1 { margin: 0 0 18px; font-size: clamp(36px, 6vw, 54px); }
+      h2 { margin: 40px 0 14px; font-size: 28px; }
+      p, li { color: var(--muted); font-size: 18px; }
+      main { padding: 40px 0 72px; }
+      .lede { font-size: 20px; }
+      .panel {
+        margin: 28px 0;
+        padding: 24px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface);
+      }
+      .panel strong { color: var(--text); }
+      code, pre {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      }
+      pre {
+        overflow-x: auto;
+        padding: 18px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface);
+        color: #dce8de;
+      }
+      img {
+        width: 100%;
+        height: auto;
+        margin: 20px 0 10px;
+        border: 1px solid #d4cec1;
+        border-radius: 8px;
+        background: #111318;
+      }
+      .actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 28px; }
+      .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 46px;
+        padding: 0 18px;
+        border-radius: 8px;
+        border: 1px solid var(--line);
+        background: var(--surface-2);
+        color: var(--text);
+        text-decoration: none;
+        font-weight: 600;
+      }
+      .button.primary {
+        background: var(--green);
+        border-color: var(--green);
+        color: #101310;
+      }
+      footer {
+        padding: 28px 0 48px;
+        border-top: 1px solid var(--line);
+        color: var(--muted);
+      }
+      @media (max-width: 640px) {
+        p, li { font-size: 17px; }
+        .actions { flex-direction: column; }
+        .button { width: 100%; }
+      }
+    </style>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "TechArticle",
+        "headline": "How to route Codex GPT models per call with Jev",
+        "description": "A practical guide to per-call Codex GPT model routing with TypeSafe Jev, a local Responses proxy, and honest prototype status.",
+        "author": { "@type": "Person", "name": "miniLV" },
+        "publisher": { "@type": "Organization", "name": "Jev Auto Router" },
+        "mainEntityOfPage": "https://minilv.github.io/Jev-Auto-Router/how-to-route-codex-gpt-models-per-call-with-jev.html"
+      }
+    </script>
+  </head>
+  <body>
+    <header>
+      <div class="wrap">
+        <p class="eyebrow">Jev Auto Router Guide</p>
+        <h1>How to route Codex GPT models per call with Jev</h1>
+        <p class="lede">
+          A coding task mixes hard reasoning with routine follow-ups. Per-call routing chooses model
+          and reasoning effort inside the same Codex session — not by spawning a new worker for each task.
+        </p>
+      </div>
+    </header>
+    <main>
+      <div class="wrap">
+        <p>
+          <strong style="color: var(--text)">Jev Auto Router</strong> is an experimental Codex model
+          router. TypeSafe's <a href="https://docs.typesafe.ai/introduction">Jev</a> makes one typed
+          Choice over host-supported <code>(model, reasoning effort)</code> pairs. A local Responses
+          proxy keeps the Codex session and tool loop continuous while the route can change call by call.
+        </p>
+
+        <div class="panel">
+          <strong>Status honesty first.</strong>
+          <p style="margin: 12px 0 0">
+            Architecture is approved; runtime is a validation prototype. Cross-model switching in a
+            real Codex tool loop, the complete verification path, and savings have not been proven end
+            to end. This guide explains the design and prerequisites — not an install-and-auto-route promise.
+          </p>
+        </div>
+
+        <img
+          src="https://raw.githubusercontent.com/miniLV/Jev-Auto-Router/master/docs/assets/jev-auto-router-sketchboard-en.png"
+          alt="Jev Auto Router per-call architecture diagram"
+          loading="lazy"
+        />
+
+        <h2>What you need</h2>
+        <ul>
+          <li>A TypeSafe account and Jev API key (<code>JEV_API_KEY</code>; can match <code>TYPESAFE_API_KEY</code>).</li>
+          <li>Node.js 22+ and a signed-in Codex CLI.</li>
+          <li>Access to the model and reasoning-effort pairs you want to route on the host.</li>
+        </ul>
+        <p>A Jev key alone does not make live per-call routing available.</p>
+
+        <h2>What happens on each call</h2>
+        <ol>
+          <li>
+            <strong style="color: var(--text)">Local Responses proxy</strong> receives the call, checks
+            whether routing is off or the call is infrastructure-only, and builds only pairs the host can request.
+          </li>
+          <li>
+            <strong style="color: var(--text)">Jev Choice</strong> selects model and effort together.
+            Ordinary candidates are Luna Max, Terra, and Sol. GPT-6 is ineligible by default.
+          </li>
+          <li>
+            <strong style="color: var(--text)">Execution guard</strong> validates ALLOW or DENY. It does
+            not re-pick a different plan. Timeout, low confidence, or invalid answers fall back to
+            Terra/medium with a recorded reason.
+          </li>
+          <li>
+            <strong style="color: var(--text)">Native Responses</strong> executes with the Codex session
+            and tool loop intact. Logs record the actual model, effort, usage, and fallback reason.
+          </li>
+        </ol>
+
+        <h2>What this is not</h2>
+        <ul>
+          <li>Not a second semantic router or task-kind table that overrides Jev.</li>
+          <li>Not automatic GPT-6 escalation after Sol struggles.</li>
+          <li>Not a claim that routing already saves money in production.</li>
+        </ul>
+
+        <h2>Local development commands</h2>
+        <p>These validate current prototype code; they do not connect Codex to a production proxy:</p>
+        <pre>npm ci
+npm test
+npm run typecheck</pre>
+
+        <h2>Related guides</h2>
+        <ul>
+          <li><a href="./how-codex-model-routing-verification-works.html">How Codex model routing verification works</a></li>
+          <li><a href="./how-to-use-jev-for-codex-model-routing-zh.html">用 Jev 做 Codex 逐调用模型路由（中文）</a></li>
+          <li><a href="./guides.html">Browse all guides</a></li>
+        </ul>
+
+        <div class="actions">
+          <a class="button primary" href="https://github.com/miniLV/Jev-Auto-Router">View on GitHub</a>
+          <a class="button" href="./guides.html">All guides</a>
+          <a class="button" href="./">Homepage</a>
+        </div>
+      </div>
+    </main>
+    <footer>
+      <div class="wrap">
+        Jev Auto Router: Codex per-call GPT model routing with TypeSafe Jev · Apache-2.0
+      </div>
+    </footer>
+  </body>
+</html>
