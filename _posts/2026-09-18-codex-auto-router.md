@@ -5,7 +5,7 @@ subtitle: "同一个会话、同一个工具循环，每次模型调用由 Jev �
 date: 2026-09-18 09:00:00 +0800
 author: "miniLV"
 header-img: "/img/in-post/codex-auto-router/jev-auto-router-per-call.png"
-summary: "Jev Auto Router 的目标架构：本地 Responses 代理在每次模型调用前做一次受约束的 Jev Choice，Guard 校验通过后只改 model 与 reasoning.effort 两个字段，其余请求与 SSE 响应原样转发。"
+summary: "Jev Auto Router：同一 Codex 会话里，每次模型调用由 TypeSafe Jev 在 GPT-6（luna / sol / astra）候选对中做一次受约束 Choice；Guard 通过后只改 model 与 reasoning.effort，其余请求与 SSE 原样转发。"
 tags:
     - Jev Auto Router
     - Jev
@@ -23,9 +23,11 @@ redirect_from:
 
 这里的 [Jev](https://docs.typesafe.ai/introduction) 是 TypeSafe 提供结构化判断的服务：它对一组已经合法的候选做一次 typed Choice；本地代码负责资格准入、安全约束和最终执行。工具执行始终由 Codex 管理，Jev 不成为 Codex 的执行模型。
 
-> **当前状态：** 认证 caller edge 已可工作，真实 Codex 会话中的跨模型工具循环（A→B→A）已按用户报告通过。本文整理自仓库里的[可视化技术设计稿](https://github.com/miniLV/Jev-Auto-Router/blob/master/tech-design.html)，描述目标架构与待 Review 的决定，不等于每个细节都已在仓库落地。
+> **当前状态：** 方案 A 运行时已落地（固定基线 / Shadow·Active / Guard·Apply / 取消传播等，确定性 HTTP 测试通过）。真实可重跑的 Codex 跨模型工具循环（A→B→A）、独立取消与配对评估发布结论仍在补证据。本文整理自仓库[可视化技术设计稿](https://github.com/miniLV/Jev-Auto-Router/blob/master/tech-design.html)，描述目标架构；模型阵容以仓库 README 为准（当前为 **GPT-6**：`gpt-6-luna` / `gpt-6-sol` / `gpt-6-astra`）。
 
 源码与决策记录：[miniLV/Jev-Auto-Router](https://github.com/miniLV/Jev-Auto-Router)（Apache-2.0）· [ADR 0017](https://github.com/miniLV/Jev-Auto-Router/blob/master/docs/adr/0017-per-call-responses-routing.md) · [架构方案](https://github.com/miniLV/Jev-Auto-Router/blob/master/docs/solution.md)
+
+当前候选是精确的 `(model, reasoning_effort)` 对，不是品牌口头档。仓库 README 里的 GPT-6 阵容是：`gpt-6-luna`（高强度推理）、`gpt-6-sol`（常规主力与固定回退基线角色）、`gpt-6-astra`（默认不在候选中，仅在证据或用户指令准入时进入）。模型选择器里「看得见」不等于 caller edge 上可执行。
 
 <br>
 
@@ -101,7 +103,7 @@ TypeSafe Jev 挂在支线上（图中虚线）：接收白名单状态与可用�
 
 - **Jev 回答**：一个候选 pair ID 与置信度。
 - **Guard**：检查 pair ID 属于当前候选、模型仍可请求、用户约束未被覆盖、置信度达到已校准阈值。
-- **失败回退**：使用事先验证的可靠组合（例如 `Sol/medium`）；不可用则在发送前明确失败；用户固定模型不会被回退降级。
+- **失败回退**：使用事先验证、且在当前 caller edge 上已实测可请求的固定基线（例如 `gpt-6-sol/medium`；**没有产品级默认组合**，须显式配置 `JEV_BASELINE`）；不可用则在发送前明确失败；用户固定模型不会被回退降级。
 - **记录**：区分 Jev 提议、实际应用和上游报告的真实模型；未知用量保留 `UNKNOWN`。
 
 Apply 前后，请求长这样（示意）：
@@ -120,7 +122,7 @@ Apply 前后，请求长这样（示意）：
 ```json
 // Apply 后发给 caller edge
 {
-  "model": "gpt-5.6-sol",
+  "model": "gpt-6-sol",
   "reasoning": { "effort": "high" },
   "input": "…",
   "tools": ["…"],
@@ -161,7 +163,8 @@ routed = { ...request, model: chosen.model, reasoning: { ...request.reasoning, e
 | 环境变量 | 说明 |
 | --- | --- |
 | `JEV_API_KEY` | TypeSafe Jev 密钥，启用路由时必填（不要写进仓库） |
-| `JEV_UPSTREAM_BASE_URL` | 认证 caller edge 地址 |
+| `JEV_UPSTREAM_BASE_URL` | 认证 caller edge 地址（不会递归回到本路由器） |
+| `JEV_BASELINE` | 当前 edge 已实测可请求的固定回退组合，如 `gpt-6-sol/medium`（必填，无通用默认） |
 | `JEV_ROUTER_OFF` | `1` = OFF 模式：不调用 Jev，`jev/auto` 用固定基线 |
 | `JEV_PORT` | 本地代理端口，默认 `8787` |
 
@@ -170,9 +173,14 @@ git clone https://github.com/miniLV/Jev-Auto-Router.git
 cd Jev-Auto-Router
 npm ci
 npm test          # 先构建再跑全部测试
-npm start         # 启动本地代理与仪表板 http://127.0.0.1:8787
+export JEV_API_KEY="<your-key>"
+export JEV_BASELINE="gpt-6-sol/medium"   # 换成你在该 caller edge 上已验证的组合
+export JEV_UPSTREAM_BASE_URL="<authenticated-caller-edge-url>"
+npm start         # 默认 Shadow；仪表板 http://127.0.0.1:8787
 curl -s localhost:8787/health   # 路由状态、基线档位、模型目录
 ```
+
+完整配置表与 Active 门禁见仓库 [README](https://github.com/miniLV/Jev-Auto-Router#配置)。
 
 代理暴露 `POST /v1/responses`：`model=jev/auto` 触发逐调用路由，真实模型直接透传。访问 `http://127.0.0.1:8787/install` 可生成一份交给 Codex 执行的安装简报，把外部 Codex Router 的 `jev/auto` 指到本地代理，全部改动可回滚。
 
