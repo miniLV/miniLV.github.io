@@ -10,6 +10,14 @@ tags:
     - 开源
 ---
 
+<img src="https://minilv.github.io/codex-plan-ledger/assets/icon-128.png" alt="codex-plan-ledger 图标" width="56" height="56">
+
+**为什么需要它：**
+
+1. 让 Codex 先计划再写代码时，它可能顺手改了你没同意过的文件。
+2. plan-ledger 在定计划时把你们商定的内容记下来（仓库里的 `decisions.json`）。
+3. 代码写完后，它拿改动文件对照这份记录，告诉你哪些超出了计划。它只比对文件列表，不读代码。
+
 用 Codex 的 Plan 模式（`/plan`）写代码，最有价值的往往不是计划本身，而是计划过程中定下来的那几个选择：失败了要不要重试、配置走参数还是环境变量、哪些文件不许动。这些选择通常只存在于对话里。过两周再看 PR，评审人看到的是代码，看不到“当时为什么这样选”；代码有没有超出当初说好的范围，也没有东西可以对照。
 
 [codex-plan-ledger](https://github.com/miniLV/codex-plan-ledger) 做的就是这两件事：
@@ -17,7 +25,15 @@ tags:
 1. **决策账本。** 把 Plan 模式里的决策写成仓库里的 `docs/plans/<id>/decisions.json`：Codex 自己问过你的问题和你的回答、计划里还待定的选择、计划写明的默认，全在里面。它和代码在同一个 PR 里，能 diff，能 review。
 2. **范围偏离检查。** 代码写完，`plan-ledger check --base main` 对照改动文件和计划：计划外被改的文件、决策里列了却一个都没碰的文件，都会报出来。
 
-![流程动图](https://raw.githubusercontent.com/miniLV/codex-plan-ledger/main/docs/assets/demo-flow-zh.gif)
+[![10 秒介绍：Codex /plan 提问并作答 → 回答写进 decisions.json → 写代码时多改了一个计划外文件 → plan-ledger check 报出这个文件](https://minilv.github.io/codex-plan-ledger/assets/intro-zh.gif)](https://minilv.github.io/codex-plan-ledger/assets/intro-zh.mp4)
+
+<sub>10 秒介绍（[MP4](https://minilv.github.io/codex-plan-ledger/assets/intro-zh.mp4)）。hook 和 check 的输出是在仓库样例上真实运行所得；Codex 窗口按样例会话记录重绘，代码改动由脚本写入。</sub>
+
+## 工作原理
+
+[![UML 时序图：开发者在 Codex /plan 里回答提问；本轮结束时 Stop hook 把问答、待定项、默认值和范围写入仓库里的 decisions.json；Codex 写代码，可能改到计划没提过的文件；plan-ledger check 读取 decisions.json 和 git diff，报出 DRIFT: src/utils/analytics.ts；PR 里带着代码和 decisions.json，评审看到每个选择和原因。](https://minilv.github.io/codex-plan-ledger/assets/how-it-works-zh.png)](https://minilv.github.io/codex-plan-ledger/assets/how-it-works-zh.png)
+
+从上往下读：实线是调用或写入，虚线是返回，橙色是 plan-ledger 做的事。图里的 `DRIFT` 那一行是 `plan-ledger check` 在仓库样例上的真实输出。
 
 ## 怎么用
 
@@ -94,6 +110,6 @@ plan-ledger check --base main --strict # 有偏离时 exit 1，可以放进 CI
 - 按内容核对决策（也就是上面那个 0/3）。
 - 更多任务、每组至少 3 次重复，测账本对一次会话里决策的覆盖程度和偏离检测。
 
-欢迎试用、提 issue：<https://github.com/miniLV/codex-plan-ledger> · 主页和在线演示：<https://minilv.github.io/codex-plan-ledger/?lang=zh>
+欢迎试用、提 issue：<https://github.com/miniLV/codex-plan-ledger> · 主页和在线演示：<https://minilv.github.io/codex-plan-ledger/zh/>
 
 思路上受到 html-plan 和 answer-me-with-html 的启发，没有复用代码。
