@@ -21,7 +21,6 @@ layout: default
   <section class="article-hero">
     <div class="shell article-hero__grid">
       <div class="article-hero__content">
-        <p class="eyebrow">{{ site.default_eyebrow }}</p>
         {% if page.tags %}
           <div class="tag-list">
             {% for tag in page.tags %}
@@ -37,23 +36,18 @@ layout: default
           <span>{{ page.author | default: site.title }}</span>
           <span>{{ page.date | date: "%Y.%m.%d" }}</span>
         </div>
-        <p class="article-summary">{{ article_summary | strip }}</p>
+        {% if page.summary or page.subtitle %}
+          <p class="article-summary">{{ article_summary | strip }}</p>
+        {% endif %}
       </div>
-      <div class="article-hero__media{% unless hero_image %} article-hero__media--ambient{% endunless %}">
-        {% if hero_image %}
+      {% if hero_image %}
+        <div class="article-hero__media has-image">
           <img
             class="article-hero__image"
             src="{% if hero_image_is_external %}{{ hero_image }}{% else %}{{ hero_image | relative_url }}{% endif %}"
             alt="{{ page.title }}">
-        {% else %}
-          <div class="article-hero__ambient" aria-hidden="true">
-            <span></span>
-            <span></span>
-            <span></span>
-          </div>
-          <p class="article-hero__ambient-copy">{{ page.tags.first | default: "Personal note" }}</p>
-        {% endif %}
-      </div>
+        </div>
+      {% endif %}
     </div>
   </section>
 

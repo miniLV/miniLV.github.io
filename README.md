@@ -1,6 +1,6 @@
 # miniLV Jekyll Notes
 
-An editorial Jekyll blog theme rebuilt for a calmer, Anthropic-inspired reading experience.
+Personal notes site. Visual layer follows Anthropic / Claude marketing cues: ivory canvas, clay accent, Source Serif + Source Sans, large type, wide whitespace.
 
 ## What You Get
 

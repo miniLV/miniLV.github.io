@@ -6,6 +6,7 @@
 
 html {
   scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
@@ -14,8 +15,12 @@ body {
   background: var(--bg-canvas);
   color: var(--text-primary);
   font-family: var(--font-ui);
-  line-height: 1.7;
+  font-size: var(--fs-detail-m);
+  font-weight: 400;
+  line-height: var(--lh-body);
+  letter-spacing: 0;
   text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
 }
 
 a {
@@ -26,6 +31,7 @@ a {
 img {
   display: block;
   max-width: 100%;
+  height: auto;
 }
 
 button,
@@ -36,25 +42,22 @@ select {
 }
 
 ::selection {
-  background: rgba(183, 103, 73, 0.16);
+  background: var(--accent-soft);
   color: var(--text-primary);
 }
 
 .site-main {
-  padding-top: calc(var(--header-height) + 1rem);
+  padding-top: var(--header-height);
 }
 
 .shell {
-  width: min(calc(100% - 2rem), var(--content-width));
+  width: min(calc(100% - 3rem), var(--content-width));
   margin: 0 auto;
 }
 
-.shell--narrow {
-  width: min(calc(100% - 2rem), var(--narrow-width));
-}
-
+.shell--narrow,
 .shell--article {
-  width: min(calc(100% - 2rem), var(--article-width));
+  width: min(calc(100% - 3rem), var(--narrow-width));
 }
 
 .skip-link {
@@ -62,9 +65,9 @@ select {
   left: 1rem;
   top: -3rem;
   padding: 0.75rem 1rem;
-  border-radius: 0.25rem;
+  border-radius: var(--radius-sm);
   background: var(--text-primary);
-  color: #fff;
+  color: var(--bg-canvas);
   z-index: 50;
   transition: top 0.18s ease;
 }
@@ -74,17 +77,18 @@ select {
 }
 
 .eyebrow {
-  margin: 0 0 0.85rem;
+  margin: 0 0 1rem;
   color: var(--accent);
-  font-size: 0.82rem;
-  font-weight: 700;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
+  font-family: var(--font-ui);
+  font-size: var(--fs-detail-s);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-transform: none;
 }
 
 .page-section,
 .article-section {
-  padding: 0 0 4.5rem;
+  padding: 0 0 6rem;
 }
 
 .section-heading {
@@ -92,7 +96,7 @@ select {
   align-items: end;
   justify-content: space-between;
   gap: 1rem;
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
 }
 
 .section-heading h2,
@@ -102,14 +106,14 @@ select {
 .not-found__card h1 {
   margin: 0;
   font-family: var(--font-editorial);
-  font-weight: 600;
-  letter-spacing: -0.03em;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: var(--lh-tight);
 }
 
 .section-heading h2,
 .page-title {
-  font-size: clamp(2.4rem, 4vw, 4.2rem);
-  line-height: 1.05;
+  font-size: clamp(2rem, 5vw, var(--fs-display-xl));
 }
 
 .section-heading__meta,
@@ -118,6 +122,10 @@ select {
 .home-hero__description {
   margin: 0;
   color: var(--text-secondary);
+  font-family: var(--font-editorial);
+  font-size: var(--fs-para-s);
+  line-height: var(--lh-body);
+  font-weight: 400;
 }
 
 .surface-card,
@@ -126,38 +134,44 @@ select {
 .tag-chip,
 .footer-link {
   border: 1px solid var(--border-soft);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-md);
   background: var(--bg-elevated);
-  box-shadow: var(--shadow-soft);
+  box-shadow: none;
 }
 
 .button-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.85rem;
+  gap: 0.75rem;
 }
 
 .button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 3.1rem;
-  padding: 0.85rem 1.35rem;
-  border-radius: 0.25rem;
+  min-height: 2.75rem;
+  padding: 0.65rem 1.25rem;
+  border-radius: 100vw;
   border: 1px solid var(--border-strong);
-  font-size: 0.98rem;
-  font-weight: 700;
-  transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+  font-family: var(--font-ui);
+  font-size: var(--fs-detail-m);
+  font-weight: 500;
+  letter-spacing: 0;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
 }
 
 .button:hover {
-  transform: translateY(-1px);
+  border-color: var(--text-primary);
 }
 
 .button--primary {
   border-color: transparent;
   background: var(--text-primary);
-  color: #fff;
+  color: var(--bg-canvas);
+}
+
+.button--primary:hover {
+  background: var(--text-secondary);
 }
 
 .button--secondary {
@@ -168,7 +182,7 @@ select {
 .tag-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.6rem;
+  gap: 0.5rem;
   margin: 0 0 1rem;
 }
 
@@ -179,28 +193,34 @@ select {
 .tag-pill {
   display: inline-flex;
   align-items: center;
-  min-height: 2.1rem;
-  padding: 0.45rem 0.85rem;
+  min-height: 1.85rem;
+  padding: 0.3rem 0.75rem;
   border: 1px solid var(--border-soft);
-  border-radius: 0.25rem;
-  background: rgba(255, 255, 255, 0.45);
+  border-radius: 100vw;
+  background: var(--bg-muted);
   color: var(--text-secondary);
-  font-size: 0.9rem;
+  font-family: var(--font-ui);
+  font-size: var(--fs-detail-s);
+  font-weight: 400;
 }
 
 .tag-pill:hover {
-  border-color: rgba(183, 103, 73, 0.24);
+  border-color: var(--accent);
   color: var(--accent-strong);
 }
 
 .text-link {
   color: var(--accent-strong);
-  font-weight: 700;
+  font-weight: 500;
 }
 
+/* Article prose — Anthropic paragraph style (serif, generous measure) */
 .prose {
   color: var(--text-primary);
-  font-size: 1.06rem;
+  font-family: var(--font-editorial);
+  font-size: var(--fs-para-s);
+  font-weight: 400;
+  line-height: var(--lh-loose);
 }
 
 .prose > *:first-child {
@@ -214,7 +234,7 @@ select {
 .prose pre,
 .prose table,
 .prose figure {
-  margin: 1.4rem 0;
+  margin: 1.35rem 0;
 }
 
 .prose h2,
@@ -222,30 +242,35 @@ select {
 .prose h4,
 .prose h5,
 .prose h6 {
-  margin: 2.8rem 0 1rem;
+  margin: 2.75rem 0 1rem;
   font-family: var(--font-editorial);
-  font-weight: 600;
-  letter-spacing: -0.025em;
-  line-height: 1.14;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: var(--lh-tight);
+  color: var(--text-primary);
 }
 
 .prose h2 {
-  font-size: clamp(1.8rem, 3vw, 2.6rem);
+  font-size: clamp(1.75rem, 3vw, var(--fs-display-m));
 }
 
 .prose h3 {
-  font-size: clamp(1.4rem, 2vw, 1.85rem);
+  font-size: clamp(1.35rem, 2vw, var(--fs-display-s));
 }
 
 .prose a {
   color: var(--accent-strong);
   text-decoration: underline;
-  text-decoration-thickness: 0.08em;
-  text-underline-offset: 0.16em;
+  text-decoration-thickness: 0.06em;
+  text-underline-offset: 0.18em;
+}
+
+.prose a:hover {
+  color: var(--accent);
 }
 
 .prose strong {
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .prose code,
@@ -254,20 +279,20 @@ select {
 }
 
 .prose code {
-  padding: 0.2rem 0.42rem;
-  border-radius: 0.2rem;
-  background: rgba(106, 74, 56, 0.08);
-  font-size: 0.9em;
+  padding: 0.15rem 0.4rem;
+  border-radius: var(--radius-sm);
+  background: var(--bg-muted);
+  font-size: 0.88em;
 }
 
 .prose pre {
   overflow-x: auto;
-  padding: 1.2rem 1.25rem;
+  padding: 1.15rem 1.25rem;
   border-radius: var(--radius-md);
-  background: #1d1713;
-  color: #f9f1e8;
+  background: #141413;
+  color: #faf9f5;
+  font-size: 0.9rem;
   line-height: 1.65;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
 }
 
 .prose pre code {
@@ -277,11 +302,12 @@ select {
 }
 
 .prose blockquote {
-  padding: 1.25rem 1.35rem;
-  border-left: 3px solid var(--accent);
-  border-radius: 0 var(--radius-md) var(--radius-md) 0;
-  background: rgba(183, 103, 73, 0.08);
+  padding: 0.25rem 0 0.25rem 1.25rem;
+  border-left: 2px solid var(--accent);
+  border-radius: 0;
+  background: transparent;
   color: var(--text-secondary);
+  font-style: italic;
 }
 
 .prose table {
@@ -291,17 +317,20 @@ select {
   overflow: hidden;
   border-radius: var(--radius-md);
   border: 1px solid var(--border-soft);
+  font-family: var(--font-ui);
+  font-size: var(--fs-detail-m);
 }
 
 .prose th,
 .prose td {
-  padding: 0.9rem 1rem;
+  padding: 0.85rem 1rem;
   border-bottom: 1px solid var(--border-soft);
   text-align: left;
 }
 
 .prose th {
-  background: rgba(106, 74, 56, 0.06);
+  background: var(--bg-muted);
+  font-weight: 500;
 }
 
 .prose hr {
@@ -311,18 +340,24 @@ select {
 }
 
 .prose li + li {
-  margin-top: 0.5rem;
+  margin-top: 0.45rem;
 }
 
 .prose figure img,
 .prose > img {
   border-radius: var(--radius-md);
-  box-shadow: var(--shadow-soft);
 }
 
 @media (max-width: $bp-tablet) {
-  .site-main {
-    padding-top: calc(var(--header-height) + 0.5rem);
+  .shell,
+  .shell--narrow,
+  .shell--article {
+    width: min(calc(100% - 2rem), var(--content-width));
+  }
+
+  .page-section,
+  .article-section {
+    padding-bottom: 4rem;
   }
 
   .section-heading {
@@ -331,6 +366,6 @@ select {
   }
 
   .prose {
-    font-size: 1rem;
+    font-size: 1.0625rem;
   }
 }
