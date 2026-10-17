@@ -25,7 +25,23 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#faf9f5">
+  <meta name="theme-color" content="#faf9f5" data-theme-color>
+  <script>
+    (function () {
+      try {
+        var stored = localStorage.getItem("theme");
+        var theme = stored === "dark" || stored === "light"
+          ? stored
+          : (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+        document.documentElement.setAttribute("data-theme", theme);
+        var meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) {
+          meta.setAttribute("content", theme === "dark" ? "#191815" : "#faf9f5");
+        }
+      } catch (e) {}
+    })();
+  </script>
+
   <meta name="description" content="{{ meta_description | strip | escape }}">
   <title>{{ page_title | strip }}</title>
 

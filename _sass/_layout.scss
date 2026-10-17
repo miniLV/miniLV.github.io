@@ -16,7 +16,7 @@
 }
 
 .site-header.is-scrolled {
-  background: rgba(250, 249, 245, 0.92);
+  background: var(--header-bg);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 }
@@ -28,8 +28,8 @@
 .site-header__inner {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
+  justify-content: flex-start;
+  gap: 0.75rem;
   min-height: var(--header-height);
 }
 
@@ -46,7 +46,7 @@
   height: 1.75rem;
   border-radius: var(--radius-sm);
   background: var(--accent);
-  color: #faf9f5;
+  color: var(--mark-fg);
   font-family: var(--font-editorial);
   font-size: 0.95rem;
   font-weight: 400;
@@ -221,6 +221,63 @@
   text-transform: lowercase;
 }
 
+
+// ==========================================================================
+// Theme toggle
+// ==========================================================================
+
+.site-header__actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-left: 0.5rem;
+}
+
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  padding: 0;
+  border: 1px solid var(--border-soft);
+  border-radius: 100vw;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.theme-toggle:hover {
+  color: var(--text-primary);
+  border-color: var(--border-strong);
+  background: var(--bg-muted);
+}
+
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.theme-toggle__icon {
+  display: none;
+  width: 1.05rem;
+  height: 1.05rem;
+}
+
+[data-theme="light"] .theme-toggle__icon--moon,
+:root:not([data-theme]) .theme-toggle__icon--moon {
+  display: block;
+}
+
+[data-theme="dark"] .theme-toggle__icon--sun {
+  display: block;
+}
+
+[data-theme="dark"] .theme-toggle__icon--moon {
+  display: none;
+}
+
 @media (max-width: $bp-tablet) {
   .site-header__inner {
     min-height: 4rem;
@@ -229,6 +286,15 @@
   .site-nav__toggle {
     display: inline-flex;
   }
+  .site-header__actions {
+    margin-left: auto;
+    margin-right: 0.35rem;
+  }
+
+  .site-nav {
+    margin-left: 0;
+  }
+
 
   .site-nav__drawer {
     position: absolute;
@@ -240,7 +306,7 @@
     padding: 0.75rem;
     border: 1px solid var(--border-soft);
     border-radius: var(--radius-lg);
-    background: rgba(250, 249, 245, 0.98);
+    background: var(--drawer-bg);
     box-shadow: none;
     opacity: 0;
     pointer-events: none;
