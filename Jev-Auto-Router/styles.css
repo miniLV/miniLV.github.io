@@ -39,6 +39,28 @@ code {
 }
 .wrap { width: min(1120px, calc(100vw - 40px)); margin: 0 auto; }
 
+.lang-bar {
+  background: #0b0c10;
+  border-bottom: 1px solid var(--line);
+}
+.lang-bar .wrap {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 0;
+}
+.lang-tab {
+  padding: 5px 12px;
+  border-radius: 999px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+}
+.lang-tab:hover { color: var(--text); background: rgba(243, 241, 235, 0.06); }
+.lang-tab.active { color: var(--ink); background: var(--green); }
+
 .hero {
   position: relative;
   overflow: hidden;

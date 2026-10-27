@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Jev Auto Router — Turn-pinned Codex routing with TypeSafe Jev</title>
+    <meta
+      name="description"
+      content="Jev Auto Router keeps one model pinned per Codex user turn, runs Jev once per turn, and changes reasoning effort with cache-preserving configuration updates. A local Responses proxy for Codex."
+    />
+    <meta
+      name="keywords"
+      content="Codex model router, Jev TypeSafe, turn-pinned routing, reasoning effort, prompt cache, Codex CLI, GPT model routing"
+    />
+    <link rel="canonical" href="https://minilv.github.io/Jev-Auto-Router/en/" />
+    <link rel="alternate" hreflang="zh-CN" href="https://minilv.github.io/Jev-Auto-Router/" />
+    <link rel="alternate" hreflang="en" href="https://minilv.github.io/Jev-Auto-Router/en/" />
+    <link rel="alternate" hreflang="x-default" href="https://minilv.github.io/Jev-Auto-Router/" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:locale:alternate" content="zh_CN" />
+    <meta property="og:title" content="Jev Auto Router — Keep the model. Move the effort." />
+    <meta
+      property="og:description"
+      content="One model per Codex turn. Jev chooses model and effort once; the tool loop stays pinned; effort updates preserve the prompt cache."
+    />
+    <meta property="og:url" content="https://minilv.github.io/Jev-Auto-Router/en/" />
+    <meta property="og:type" content="website" />
+    <meta
+      property="og:image"
+      content="https://minilv.github.io/img/in-post/codex-auto-router/turn-router-main-flow-en.png"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="stylesheet" href="../styles.css" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "Jev Auto Router",
+        "alternateName": ["Jev Router", "Jev Auto Router for Codex"],
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "macOS, Linux",
+        "description": "Turn-pinned model routing and cache-preserving reasoning-effort control for Codex, with TypeSafe Jev.",
+        "url": "https://minilv.github.io/Jev-Auto-Router/",
+        "codeRepository": "https://github.com/miniLV/Jev-Auto-Router",
+        "license": "https://www.apache.org/licenses/LICENSE-2.0",
+        "author": {
+          "@type": "Person",
+          "name": "miniLV",
+          "url": "https://github.com/miniLV"
+        },
+        "keywords": [
+          "Codex model router",
+          "Jev TypeSafe",
+          "turn-pinned routing",
+          "reasoning effort",
+          "prompt cache"
+        ]
+      }
+    </script>
+  </head>
+  <body>
+    <nav class="lang-bar" aria-label="Language">
+      <div class="wrap">
+        <a class="lang-tab" href="../">中文</a>
+        <a class="lang-tab active" href="./" aria-current="page">EN</a>
+      </div>
+    </nav>
+
+    <header class="hero">
+      <div class="wrap hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow">Jev Auto Router</p>
+          <div class="badge">v0.1.0 alpha · turn-pinned</div>
+          <h1>Keep the model.<br />Move the effort.</h1>
+          <p class="lead">
+            Jev chooses the model and effort <strong>once per Codex user turn</strong>. The model
+            stays pinned through the tool loop; effort changes travel as cache-preserving
+            <code>configuration_update</code> items.
+          </p>
+          <div class="actions">
+            <a class="button primary" href="https://github.com/miniLV/Jev-Auto-Router">View on GitHub</a>
+            <a class="button secondary" href="#quickstart">Quickstart</a>
+            <a class="button secondary" href="https://minilv.github.io/2026/09/18/codex-auto-router/">Read the write-up (Chinese)</a>
+          </div>
+          <p class="status-note">
+            <strong>Honest status:</strong> 60 deterministic tests pass. Real GPT cache-hit and
+            quality non-inferiority are still being measured. Effort routing is off by default.
+          </p>
+        </div>
+
+        <aside class="route-card" aria-label="Illustrative turn routing card">
+          <div class="route-head">
+            <span>turn 01</span>
+            <span class="route-live">pinned</span>
+          </div>
+          <div class="route-row">
+            <span>model</span>
+            <strong>gpt-6-sol</strong>
+          </div>
+          <div class="route-row">
+            <span>effort</span>
+            <strong>low → high</strong>
+          </div>
+          <div class="route-row">
+            <span>tool loop</span>
+            <strong>no re-route</strong>
+          </div>
+          <div class="route-row">
+            <span>cache</span>
+            <strong>kept</strong>
+          </div>
+          <p class="route-foot">Jev is asked once. The loop is not.</p>
+        </aside>
+      </div>
+    </header>
+
+    <main>
+      <section>
+        <div class="wrap">
+          <p class="section-kicker">Why turn-pinned</p>
+          <h2>Switching models inside a tool loop is the expensive way to route.</h2>
+          <div class="grid">
+            <article class="card">
+              <span class="card-num">01</span>
+              <strong>One decision per turn</strong>
+              <p>
+                A fresh user turn gets one Jev call. Tool continuations, retries and follow-up
+                model calls reuse the pinned decision.
+              </p>
+            </article>
+            <article class="card">
+              <span class="card-num">02</span>
+              <strong>Cache is the budget</strong>
+              <p>
+                A new model has to rebuild the prompt prefix. Keeping the model fixed through the
+                tool loop limits rebuilds to turn boundaries.
+              </p>
+            </article>
+            <article class="card">
+              <span class="card-num">03</span>
+              <strong>Effort is the fine control</strong>
+              <p>
+                Same model, same prefix: effort can move without paying a prefix rebuild. That is
+                the cache-safe lever for routine turns.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="wrap product">
+          <div class="product-copy">
+            <p class="section-kicker">The flow</p>
+            <h2>New turn → Jev once → policy gate → pinned model → tool loop.</h2>
+            <p>
+              <code>jev-codex</code> launches the real Codex CLI and exposes a virtual
+              <code>jev-router</code> model. The local proxy recognizes a fresh user turn, asks
+              <a href="https://docs.typesafe.ai/introduction">TypeSafe Jev</a> once, applies
+              deterministic gates, then writes the real model into the request.
+            </p>
+            <p>
+              The rest of the turn stays stable: the same model handles every tool continuation.
+              The next user turn is the first opportunity to choose again.
+            </p>
+          </div>
+          <a class="diagram-link" href="/img/in-post/codex-auto-router/turn-router-main-flow-en.png" target="_blank" rel="noopener" title="Open the full main-flow diagram">
+            <img
+              src="/img/in-post/codex-auto-router/turn-router-main-flow-en.png"
+              alt="Turn Router main flow: a new user turn asks Jev once, the model is pinned, and the tool loop reuses it"
+              loading="lazy"
+            />
+            <span>Open full diagram ↗</span>
+          </a>
+        </div>
+      </section>
+
+      <section>
+        <div class="wrap product reverse">
+          <div class="product-copy">
+            <p class="section-kicker">The control loop</p>
+            <h2>Four decisions: pick, gate, run, learn.</h2>
+            <p>
+              Jev proposes model and effort; local policy decides whether the switch is allowed.
+              Price break-even, cache warmth, session state and upgrade triggers all enter the same
+              deterministic gate.
+            </p>
+            <p>
+              After the turn, usage updates cache warmth, failures can trigger an upgrade, and the
+              session is persisted. Compaction resets cache evidence and effort provenance.
+            </p>
+          </div>
+          <a class="diagram-link" href="/img/in-post/codex-auto-router/turn-router-control-loop-en.png" target="_blank" rel="noopener" title="Open the full control-loop diagram">
+            <img
+              src="/img/in-post/codex-auto-router/turn-router-control-loop-en.png"
+              alt="Turn Router control loop: pick model and effort, pass deterministic gates, pin the model, then learn from usage and session state"
+              loading="lazy"
+            />
+            <span>Open full diagram ↗</span>
+          </a>
+        </div>
+      </section>
+
+      <section class="alt">
+        <div class="wrap">
+          <p class="section-kicker">Guardrails</p>
+          <h2>Jev proposes. Code decides.</h2>
+          <div class="grid compact">
+            <article class="card">
+              <strong>Price break-even</strong>
+              <p>Compare the target model's rebuild cost with the per-turn saving over remaining turns.</p>
+            </article>
+            <article class="card">
+              <strong>Cache warmth</strong>
+              <p>Read <code>cached_tokens</code> from response usage. A cold cache makes a downgrade cheaper to try.</p>
+            </article>
+            <article class="card">
+              <strong>Session guard</strong>
+              <p>Lock after a turn budget, cap switches, cooldown between changes, and persist across resume.</p>
+            </article>
+            <article class="card">
+              <strong>Upgrade trigger</strong>
+              <p>Upgrade only on failure, high complexity or an explicit user request — not every Jev suggestion.</p>
+            </article>
+            <article class="card">
+              <strong>Compaction reset</strong>
+              <p>A compacted prefix invalidates cache evidence and effort anchors. Start clean.</p>
+            </article>
+            <article class="card">
+              <strong>Effort cap</strong>
+              <p>Per-turn effort is capped at <code>high</code> by default, with a defined fallback.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="wrap">
+          <p class="section-kicker">The trade-off</p>
+          <h2>Effort first. Model second. Never per call.</h2>
+          <div class="compare">
+            <div>
+              <h3>Per-call routing</h3>
+              <ul>
+                <li>Model can change on every model call.</li>
+                <li>Prefix cache is rebuilt repeatedly.</li>
+                <li>Tool loop behavior is less stable.</li>
+                <li>Best case: better per-call fit.</li>
+              </ul>
+            </div>
+            <div class="compare-good">
+              <h3>Turn-pinned + effort</h3>
+              <ul>
+                <li>One model per user turn.</li>
+                <li>Tool loop reuses the same model.</li>
+                <li>Effort can move with <code>configuration_update</code>.</li>
+                <li>Best case: fewer rebuilds, less reasoning on routine work.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="alt">
+        <div class="wrap">
+          <p class="section-kicker">Evidence</p>
+          <h2>What is proven — and what is not.</h2>
+          <div class="status-grid">
+            <article class="card">
+              <span class="status-pill good">Tested</span>
+              <strong>Deterministic behavior</strong>
+              <p>
+                Turn detection, tool-loop pinning, retry dedupe, price gates, session guards, effort
+                anchors, compaction reset and the session store. 60 tests.
+              </p>
+            </article>
+            <article class="card">
+              <span class="status-pill warn">Not yet</span>
+              <strong>Real-world savings</strong>
+              <p>
+                Live GPT cache-hit rate, quality non-inferiority, output-token reduction and
+                end-to-end latency still need a paired evaluation.
+              </p>
+            </article>
+          </div>
+          <p class="evidence-link">
+            <a href="https://github.com/miniLV/Jev-Auto-Router/blob/master/docs/evaluation-plan.md">Read the evaluation plan →</a>
+          </p>
+        </div>
+      </section>
+
+      <section id="quickstart">
+        <div class="wrap">
+          <p class="section-kicker">Quickstart</p>
+          <h2>Build from source. Keep the first run small.</h2>
+          <p class="quick-copy">
+            Node.js 22+, a signed-in Codex CLI and a TypeSafe Jev key are required. The npm package
+            is being prepared; source install is the current path.
+          </p>
+          <pre class="code-block"><code>git clone https://github.com/miniLV/Jev-Auto-Router.git
+cd Jev-Auto-Router
+npm ci
+npm run build
+
+export JEV_API_KEY="&lt;your-typesafe-key&gt;"
+node bin/jev-codex.mjs</code></pre>
+          <p class="quick-copy">
+            Effort routing is off by default. To try the new loop on a small task:
+          </p>
+          <pre class="code-block"><code>export JEV_CODEX_EFFORT_ROUTING=turn
+export JEV_CODEX_EFFORT_CAP=high
+node bin/jev-codex.mjs</code></pre>
+          <p class="quick-links">
+            <a href="https://github.com/miniLV/Jev-Auto-Router/blob/master/README.en.md">README (EN)</a>
+            <span>·</span>
+            <a href="https://github.com/miniLV/Jev-Auto-Router/blob/master/docs/codex-turn-router.md">Design notes</a>
+            <span>·</span>
+            <a href="https://github.com/miniLV/Jev-Auto-Router/blob/master/docs/evaluation-plan.md">Evaluation plan</a>
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="wrap">
+        <div>Jev Auto Router · Apache-2.0 · turn-pinned routing for Codex</div>
+        <div>
+          <a href="https://github.com/miniLV/Jev-Auto-Router">GitHub</a>
+          <span>·</span>
+          <a href="https://minilv.github.io/2026/09/18/codex-auto-router/">Write-up</a>
+          <span>·</span>
+          <a href="https://docs.typesafe.ai/introduction">TypeSafe Jev</a>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

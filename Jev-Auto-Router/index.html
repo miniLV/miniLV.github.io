@@ -1,28 +1,33 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Jev Auto Router — Turn-pinned Codex routing with TypeSafe Jev</title>
+    <title>Jev Auto Router — 把模型固定在 Turn 里，把 effort 放出来</title>
     <meta
       name="description"
-      content="Jev Auto Router keeps one model pinned per Codex user turn, runs Jev once per turn, and changes reasoning effort with cache-preserving configuration updates. A local Responses proxy for Codex."
+      content="Jev Auto Router 在 Codex 的每个 user turn 只问一次 Jev，模型固定到整个 tool loop；effort 用 cache-preserving 的 configuration_update 调整。一个 turn 级模型路由与 effort 控制方案。"
     />
     <meta
       name="keywords"
-      content="Codex model router, Jev TypeSafe, turn-pinned routing, reasoning effort, prompt cache, Codex CLI, GPT model routing"
+      content="Codex 模型路由, Jev TypeSafe, turn-pinned, reasoning effort, prompt cache, Codex CLI, GPT 模型路由"
     />
     <link rel="canonical" href="https://minilv.github.io/Jev-Auto-Router/" />
-    <meta property="og:title" content="Jev Auto Router — Keep the model. Move the effort." />
+    <link rel="alternate" hreflang="zh-CN" href="https://minilv.github.io/Jev-Auto-Router/" />
+    <link rel="alternate" hreflang="en" href="https://minilv.github.io/Jev-Auto-Router/en/" />
+    <link rel="alternate" hreflang="x-default" href="https://minilv.github.io/Jev-Auto-Router/" />
+    <meta property="og:locale" content="zh_CN" />
+    <meta property="og:locale:alternate" content="en_US" />
+    <meta property="og:title" content="Jev Auto Router — 模型固定，effort 可变" />
     <meta
       property="og:description"
-      content="One model per Codex turn. Jev chooses model and effort once; the tool loop stays pinned; effort updates preserve the prompt cache."
+      content="一个 Codex turn 一次决策；模型固定跑 tool loop，effort 用 configuration_update 调整，尽量保留 prompt cache。"
     />
     <meta property="og:url" content="https://minilv.github.io/Jev-Auto-Router/" />
     <meta property="og:type" content="website" />
     <meta
       property="og:image"
-      content="https://minilv.github.io/img/in-post/codex-auto-router/turn-router-main-flow-en.png"
+      content="https://minilv.github.io/img/in-post/codex-auto-router/turn-router-main-flow.png"
     />
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="stylesheet" href="./styles.css" />
@@ -43,40 +48,41 @@
           "name": "miniLV",
           "url": "https://github.com/miniLV"
         },
-        "keywords": [
-          "Codex model router",
-          "Jev TypeSafe",
-          "turn-pinned routing",
-          "reasoning effort",
-          "prompt cache"
-        ]
+        "keywords": ["Codex 模型路由", "Jev TypeSafe", "turn-pinned", "reasoning effort", "prompt cache"]
       }
     </script>
   </head>
   <body>
+    <nav class="lang-bar" aria-label="语言切换">
+      <div class="wrap">
+        <a class="lang-tab active" href="./" aria-current="page">中文</a>
+        <a class="lang-tab" href="./en/">EN</a>
+      </div>
+    </nav>
+
     <header class="hero">
       <div class="wrap hero-grid">
         <div class="hero-copy">
           <p class="eyebrow">Jev Auto Router</p>
           <div class="badge">v0.1.0 alpha · turn-pinned</div>
-          <h1>Keep the model.<br />Move the effort.</h1>
+          <h1>模型固定。<br />effort 可变。</h1>
           <p class="lead">
-            Jev chooses the model and effort <strong>once per Codex user turn</strong>. The model
-            stays pinned through the tool loop; effort changes travel as cache-preserving
-            <code>configuration_update</code> items.
+            Jev 在<strong>每个 Codex user turn 只做一次选择</strong>。模型固定跑完整个 tool
+            loop；effort 作为细粒度旋钮，通过 cache-preserving 的
+            <code>configuration_update</code> 调整。
           </p>
           <div class="actions">
-            <a class="button primary" href="https://github.com/miniLV/Jev-Auto-Router">View on GitHub</a>
-            <a class="button secondary" href="#quickstart">Quickstart</a>
-            <a class="button secondary" href="https://minilv.github.io/2026/09/18/codex-auto-router/">Read the write-up</a>
+            <a class="button primary" href="https://github.com/miniLV/Jev-Auto-Router">查看 GitHub</a>
+            <a class="button secondary" href="#quickstart">快速开始</a>
+            <a class="button secondary" href="https://minilv.github.io/2026/09/18/codex-auto-router/">阅读文章</a>
           </div>
           <p class="status-note">
-            <strong>Honest status:</strong> 60 deterministic tests pass. Real GPT cache-hit and
-            quality non-inferiority are still being measured. Effort routing is off by default.
+            <strong>诚实状态：</strong>60 个确定性测试通过；真实 GPT 的 cache 命中和质量非劣还在评测。
+            effort routing 默认关闭。
           </p>
         </div>
 
-        <aside class="route-card" aria-label="Illustrative turn routing card">
+        <aside class="route-card" aria-label="示意性的 turn 路由卡片">
           <div class="route-head">
             <span>turn 01</span>
             <span class="route-live">pinned</span>
@@ -91,13 +97,13 @@
           </div>
           <div class="route-row">
             <span>tool loop</span>
-            <strong>no re-route</strong>
+            <strong>不再路由</strong>
           </div>
           <div class="route-row">
             <span>cache</span>
-            <strong>kept</strong>
+            <strong>保留</strong>
           </div>
-          <p class="route-foot">Jev is asked once. The loop is not.</p>
+          <p class="route-foot">Jev 只问一次，tool loop 不再问。</p>
         </aside>
       </div>
     </header>
@@ -105,31 +111,31 @@
     <main>
       <section>
         <div class="wrap">
-          <p class="section-kicker">Why turn-pinned</p>
-          <h2>Switching models inside a tool loop is the expensive way to route.</h2>
+          <p class="section-kicker">为什么是 turn-pinned</p>
+          <h2>在 tool loop 里切模型，是最贵的路由方式。</h2>
           <div class="grid">
             <article class="card">
               <span class="card-num">01</span>
-              <strong>One decision per turn</strong>
+              <strong>每个 turn 一次决策</strong>
               <p>
-                A fresh user turn gets one Jev call. Tool continuations, retries and follow-up
-                model calls reuse the pinned decision.
+                新的 user turn 只问一次 Jev。tool continuation、重试和后续 model call
+                都复用这个已经固定的决定。
               </p>
             </article>
             <article class="card">
               <span class="card-num">02</span>
-              <strong>Cache is the budget</strong>
+              <strong>缓存是预算</strong>
               <p>
-                A new model has to rebuild the prompt prefix. Keeping the model fixed through the
-                tool loop limits rebuilds to turn boundaries.
+                新模型必须重建 prompt prefix。把模型固定在整个 tool loop 内，能把重建次数压到
+                turn 边界。
               </p>
             </article>
             <article class="card">
               <span class="card-num">03</span>
-              <strong>Effort is the fine control</strong>
+              <strong>effort 是细粒度控制</strong>
               <p>
-                Same model, same prefix: effort can move without paying a prefix rebuild. That is
-                the cache-safe lever for routine turns.
+                同一个模型、同一个 prefix：effort 可以移动，而不用支付 prefix 重建。这是日常
+                turn 最稳的省钱杠杆。
               </p>
             </article>
           </div>
@@ -139,26 +145,26 @@
       <section>
         <div class="wrap product">
           <div class="product-copy">
-            <p class="section-kicker">The flow</p>
-            <h2>New turn → Jev once → policy gate → pinned model → tool loop.</h2>
+            <p class="section-kicker">主流程</p>
+            <h2>新 turn → Jev 一次 → 政策闸门 → 固定模型 → tool loop。</h2>
             <p>
-              <code>jev-codex</code> launches the real Codex CLI and exposes a virtual
-              <code>jev-router</code> model. The local proxy recognizes a fresh user turn, asks
-              <a href="https://docs.typesafe.ai/introduction">TypeSafe Jev</a> once, applies
-              deterministic gates, then writes the real model into the request.
+              <code>jev-codex</code> 启动真实 Codex，并在 picker 里暴露虚拟模型
+              <code>jev-router</code>。本地代理识别 fresh user turn，问一次
+              <a href="https://docs.typesafe.ai/introduction">TypeSafe Jev</a>，通过确定性 gate
+              后把真实模型写进请求。
             </p>
             <p>
-              The rest of the turn stays stable: the same model handles every tool continuation.
-              The next user turn is the first opportunity to choose again.
+              这一轮剩下的部分保持稳定：同一个模型处理所有 tool continuation。下一个 user turn
+              才是下一次重新选择的机会。
             </p>
           </div>
-          <a class="diagram-link" href="/img/in-post/codex-auto-router/turn-router-main-flow-en.png" target="_blank" rel="noopener" title="Open the full main-flow diagram">
+          <a class="diagram-link" href="/img/in-post/codex-auto-router/turn-router-main-flow.png" target="_blank" rel="noopener" title="打开完整主流程图">
             <img
-              src="/img/in-post/codex-auto-router/turn-router-main-flow-en.png"
-              alt="Turn Router main flow: a new user turn asks Jev once, the model is pinned, and the tool loop reuses it"
+              src="/img/in-post/codex-auto-router/turn-router-main-flow.png"
+              alt="Turn Router 主流程：新 user turn 问一次 Jev，模型固定，tool loop 复用"
               loading="lazy"
             />
-            <span>Open full diagram ↗</span>
+            <span>打开完整图 ↗</span>
           </a>
         </div>
       </section>
@@ -166,25 +172,24 @@
       <section>
         <div class="wrap product reverse">
           <div class="product-copy">
-            <p class="section-kicker">The control loop</p>
-            <h2>Four decisions: pick, gate, run, learn.</h2>
+            <p class="section-kicker">控制回路</p>
+            <h2>四个决策：选 → 闸 → 跑 → 学。</h2>
             <p>
-              Jev proposes model and effort; local policy decides whether the switch is allowed.
-              Price break-even, cache warmth, session state and upgrade triggers all enter the same
-              deterministic gate.
+              Jev 提议 model 和 effort；本地 policy 决定这次切换是否允许。价格 break-even、缓存
+              热度、session 状态和 upgrade trigger 都进入同一个确定性闸门。
             </p>
             <p>
-              After the turn, usage updates cache warmth, failures can trigger an upgrade, and the
-              session is persisted. Compaction resets cache evidence and effort provenance.
+              turn 结束后，usage 更新缓存热度，失败可以触发升级，session 被持久化。compaction
+              会重置缓存证据和 effort provenance。
             </p>
           </div>
-          <a class="diagram-link" href="/img/in-post/codex-auto-router/turn-router-control-loop-en.png" target="_blank" rel="noopener" title="Open the full control-loop diagram">
+          <a class="diagram-link" href="/img/in-post/codex-auto-router/turn-router-control-loop.png" target="_blank" rel="noopener" title="打开完整控制回路图">
             <img
-              src="/img/in-post/codex-auto-router/turn-router-control-loop-en.png"
-              alt="Turn Router control loop: pick model and effort, pass deterministic gates, pin the model, then learn from usage and session state"
+              src="/img/in-post/codex-auto-router/turn-router-control-loop.png"
+              alt="Turn Router 控制回路：选模型和 effort，通过确定性闸门，固定模型运行，再从 usage 和 session 学习"
               loading="lazy"
             />
-            <span>Open full diagram ↗</span>
+            <span>打开完整图 ↗</span>
           </a>
         </div>
       </section>
@@ -192,31 +197,31 @@
       <section class="alt">
         <div class="wrap">
           <p class="section-kicker">Guardrails</p>
-          <h2>Jev proposes. Code decides.</h2>
+          <h2>Jev 提议，代码决定。</h2>
           <div class="grid compact">
             <article class="card">
-              <strong>Price break-even</strong>
-              <p>Compare the target model's rebuild cost with the per-turn saving over remaining turns.</p>
+              <strong>价格 break-even</strong>
+              <p>比较目标模型的重建成本和剩余 turn 的每轮节省。</p>
             </article>
             <article class="card">
-              <strong>Cache warmth</strong>
-              <p>Read <code>cached_tokens</code> from response usage. A cold cache makes a downgrade cheaper to try.</p>
+              <strong>缓存热度</strong>
+              <p>从响应 usage 读取 <code>cached_tokens</code>。冷缓存让降级更值得尝试。</p>
             </article>
             <article class="card">
-              <strong>Session guard</strong>
-              <p>Lock after a turn budget, cap switches, cooldown between changes, and persist across resume.</p>
+              <strong>会话稳定</strong>
+              <p>超过 turn 预算后锁定、限制切换次数、切换后 cooldown，并在 resume 后恢复。</p>
             </article>
             <article class="card">
-              <strong>Upgrade trigger</strong>
-              <p>Upgrade only on failure, high complexity or an explicit user request — not every Jev suggestion.</p>
+              <strong>升级触发</strong>
+              <p>只在 failure、高复杂度或用户显式要求时升级，而不是 Jev 一说升级就切。</p>
             </article>
             <article class="card">
               <strong>Compaction reset</strong>
-              <p>A compacted prefix invalidates cache evidence and effort anchors. Start clean.</p>
+              <p>压缩后的 prefix 已经变了，缓存证据和 effort anchor 都要重置。</p>
             </article>
             <article class="card">
               <strong>Effort cap</strong>
-              <p>Per-turn effort is capped at <code>high</code> by default, with a defined fallback.</p>
+              <p>每轮 effort 默认封顶 <code>high</code>，并定义明确的 fallback。</p>
             </article>
           </div>
         </div>
@@ -224,25 +229,25 @@
 
       <section>
         <div class="wrap">
-          <p class="section-kicker">The trade-off</p>
-          <h2>Effort first. Model second. Never per call.</h2>
+          <p class="section-kicker">取舍</p>
+          <h2>先降 effort，再降 model；永远不要 per-call。</h2>
           <div class="compare">
             <div>
               <h3>Per-call routing</h3>
               <ul>
-                <li>Model can change on every model call.</li>
-                <li>Prefix cache is rebuilt repeatedly.</li>
-                <li>Tool loop behavior is less stable.</li>
-                <li>Best case: better per-call fit.</li>
+                <li>每次 model call 都可能换模型。</li>
+                <li>prefix cache 会被反复重建。</li>
+                <li>tool loop 行为更不稳定。</li>
+                <li>最好情况：每次调用更贴合。</li>
               </ul>
             </div>
             <div class="compare-good">
               <h3>Turn-pinned + effort</h3>
               <ul>
-                <li>One model per user turn.</li>
-                <li>Tool loop reuses the same model.</li>
-                <li>Effort can move with <code>configuration_update</code>.</li>
-                <li>Best case: fewer rebuilds, less reasoning on routine work.</li>
+                <li>一个 user turn 一个模型。</li>
+                <li>tool loop 复用同一个模型。</li>
+                <li>effort 可以用 <code>configuration_update</code> 移动。</li>
+                <li>最好情况：更少重建，日常任务更少 reasoning。</li>
               </ul>
             </div>
           </div>
@@ -251,39 +256,38 @@
 
       <section class="alt">
         <div class="wrap">
-          <p class="section-kicker">Evidence</p>
-          <h2>What is proven — and what is not.</h2>
+          <p class="section-kicker">证据</p>
+          <h2>已经证明什么，还没证明什么。</h2>
           <div class="status-grid">
             <article class="card">
-              <span class="status-pill good">Tested</span>
-              <strong>Deterministic behavior</strong>
+              <span class="status-pill good">已测试</span>
+              <strong>确定性行为</strong>
               <p>
-                Turn detection, tool-loop pinning, retry dedupe, price gates, session guards, effort
-                anchors, compaction reset and the session store. 60 tests.
+                turn 识别、tool-loop pinning、retry dedupe、价格 gate、session guard、effort
+                anchor、compaction reset 和 session store。共 60 个测试。
               </p>
             </article>
             <article class="card">
-              <span class="status-pill warn">Not yet</span>
-              <strong>Real-world savings</strong>
+              <span class="status-pill warn">未验证</span>
+              <strong>真实收益</strong>
               <p>
-                Live GPT cache-hit rate, quality non-inferiority, output-token reduction and
-                end-to-end latency still need a paired evaluation.
+                真实 GPT 的 cache 命中率、质量非劣、output token 降幅和端到端延迟，还需要配对
+                评测。
               </p>
             </article>
           </div>
           <p class="evidence-link">
-            <a href="https://github.com/miniLV/Jev-Auto-Router/blob/master/docs/evaluation-plan.md">Read the evaluation plan →</a>
+            <a href="https://github.com/miniLV/Jev-Auto-Router/blob/master/docs/evaluation-plan.md">阅读评测计划 →</a>
           </p>
         </div>
       </section>
 
       <section id="quickstart">
         <div class="wrap">
-          <p class="section-kicker">Quickstart</p>
-          <h2>Build from source. Keep the first run small.</h2>
+          <p class="section-kicker">快速开始</p>
+          <h2>从源码构建，先跑一个小任务。</h2>
           <p class="quick-copy">
-            Node.js 22+, a signed-in Codex CLI and a TypeSafe Jev key are required. The npm package
-            is being prepared; source install is the current path.
+            需要 Node.js 22+、已登录的 Codex CLI 和 TypeSafe Jev key。npm 包正在准备；当前使用源码安装。
           </p>
           <pre class="code-block"><code>git clone https://github.com/miniLV/Jev-Auto-Router.git
 cd Jev-Auto-Router
@@ -292,18 +296,16 @@ npm run build
 
 export JEV_API_KEY="&lt;your-typesafe-key&gt;"
 node bin/jev-codex.mjs</code></pre>
-          <p class="quick-copy">
-            Effort routing is off by default. To try the new loop on a small task:
-          </p>
+          <p class="quick-copy">effort routing 默认关闭。想试新的控制回路，先在一个小任务上开启：</p>
           <pre class="code-block"><code>export JEV_CODEX_EFFORT_ROUTING=turn
 export JEV_CODEX_EFFORT_CAP=high
 node bin/jev-codex.mjs</code></pre>
           <p class="quick-links">
             <a href="https://github.com/miniLV/Jev-Auto-Router#readme">README</a>
             <span>·</span>
-            <a href="https://github.com/miniLV/Jev-Auto-Router/blob/master/docs/codex-turn-router.md">Design notes</a>
+            <a href="https://github.com/miniLV/Jev-Auto-Router/blob/master/docs/codex-turn-router.md">设计文档</a>
             <span>·</span>
-            <a href="https://github.com/miniLV/Jev-Auto-Router/blob/master/docs/evaluation-plan.md">Evaluation plan</a>
+            <a href="https://github.com/miniLV/Jev-Auto-Router/blob/master/docs/evaluation-plan.md">评测计划</a>
           </p>
         </div>
       </section>
@@ -311,11 +313,11 @@ node bin/jev-codex.mjs</code></pre>
 
     <footer>
       <div class="wrap">
-        <div>Jev Auto Router · Apache-2.0 · turn-pinned routing for Codex</div>
+        <div>Jev Auto Router · Apache-2.0 · Codex turn-pinned 路由</div>
         <div>
           <a href="https://github.com/miniLV/Jev-Auto-Router">GitHub</a>
           <span>·</span>
-          <a href="https://minilv.github.io/2026/09/18/codex-auto-router/">Write-up</a>
+          <a href="https://minilv.github.io/2026/09/18/codex-auto-router/">文章</a>
           <span>·</span>
           <a href="https://docs.typesafe.ai/introduction">TypeSafe Jev</a>
         </div>
