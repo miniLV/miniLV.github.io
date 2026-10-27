@@ -121,7 +121,7 @@ Prompt cache 按请求前缀命中。前缀包括 system/developer 消息、工�
 永远不要在 tool loop 内切 model
 ```
 
-![收益边界：强模型 + low effort 是最稳的收益；降 model 要等 break-even](/img/in-post/codex-auto-router/turn-router-tradeoffs.png)
+![同一个 5-turn 任务，三种花法：降 effort 保留 cache，切 model 多出一块 prefix 重建](/img/in-post/codex-auto-router/turn-router-tradeoffs.png)
 
 ### effort 怎么改，才不会把 cache 弄丢
 
