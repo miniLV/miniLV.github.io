@@ -83,7 +83,7 @@
             <a class="button secondary" href="https://minilv.github.io/2026/09/18/codex-auto-router/">Read the write-up (Chinese)</a>
           </div>
           <p class="status-note">
-            <strong>Honest status:</strong> 60 deterministic tests pass. Real GPT cache-hit and
+            <strong>Honest status:</strong> 63 deterministic tests pass. Real GPT cache-hit and
             quality non-inferiority are still being measured. Effort routing is off by default.
           </p>
         </div>
@@ -262,6 +262,17 @@
       </section>
 
       <section class="alt">
+        <div class="wrap product">
+          <div class="product-copy">
+            <p class="section-kicker">CODEX APP</p>
+            <h2>The same model, now in the app.</h2>
+            <p>The same local provider also powers the Codex app. Run <code>jev-codex setup-app</code>, fully restart the app, create a new task, and select <code>Jev Auto Router</code> in the model picker.</p>
+          </div>
+          <img class="app-shot" src="/img/in-post/codex-auto-router/codex-app-model-picker.png" alt="Codex app model picker with Jev Auto Router selected" loading="lazy" />
+        </div>
+      </section>
+
+      <section class="alt">
         <div class="wrap">
           <p class="section-kicker">Evidence</p>
           <h2>What is proven — and what is not.</h2>
@@ -294,8 +305,8 @@
           <p class="section-kicker">Quickstart</p>
           <h2>Build from source. Keep the first run small.</h2>
           <p class="quick-copy">
-            Node.js 22+, a signed-in Codex CLI and a TypeSafe Jev key are required. The npm package
-            is being prepared; source install is the current path.
+            Node.js 22+, a signed-in Codex CLI and a TypeSafe Jev key are required. The npm registry release is
+            still pending; source install is the current path.
           </p>
           <pre class="code-block"><code>git clone https://github.com/miniLV/Jev-Auto-Router.git
 cd Jev-Auto-Router
@@ -310,6 +321,8 @@ node bin/jev-codex.mjs</code></pre>
           <pre class="code-block"><code>export JEV_CODEX_EFFORT_ROUTING=turn
 export JEV_CODEX_EFFORT_CAP=high
 node bin/jev-codex.mjs</code></pre>
+          <p class="quick-copy">The Codex app uses the same local provider:</p>
+          <pre class="code-block"><code>jev-codex setup-app</code></pre>
           <p class="quick-links">
             <a href="https://github.com/miniLV/Jev-Auto-Router/blob/master/README.en.md">README (EN)</a>
             <span>·</span>

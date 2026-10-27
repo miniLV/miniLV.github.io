@@ -252,6 +252,16 @@ h3 { margin: 0 0 12px; font-size: 20px; }
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 .diagram-link:hover img { transform: translateY(-2px); box-shadow: 0 22px 50px rgba(23, 26, 33, 0.14); }
+.app-shot {
+  display: block;
+  width: min(100%, 520px);
+  height: auto;
+  margin: 0 auto;
+  border: 1px solid var(--paper-line);
+  border-radius: 9px;
+  background: #fff;
+  box-shadow: 0 18px 44px rgba(23, 26, 33, 0.1);
+}
 .diagram-link span {
   display: block;
   margin-top: 8px;

@@ -31,7 +31,7 @@ redirect_from:
 
 这篇文章记录新的 turn-pinned 架构、effort routing 的边界，以及我对“什么时候真的省钱”的判断。
 
-> **当前状态：** 0.1.0 alpha。确定性测试 60/60 通过；真实 Codex + GPT 的 cache 命中和质量非劣还没有完成端到端验证。effort routing 默认关闭，先做小任务 smoke，再考虑长期开启。
+> **当前状态：** 0.1.0 alpha。确定性测试 63/63 通过；真实 Codex + GPT 的 cache 命中和质量非劣还没有完成端到端验证。effort routing 默认关闭，先做小任务 smoke，再考虑长期开启。
 
 <br>
 

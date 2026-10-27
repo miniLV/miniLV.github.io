@@ -77,7 +77,7 @@
             <a class="button secondary" href="https://minilv.github.io/2026/09/18/codex-auto-router/">阅读文章</a>
           </div>
           <p class="status-note">
-            <strong>诚实状态：</strong>60 个确定性测试通过；真实 GPT 的 cache 命中和质量非劣还在评测。
+            <strong>诚实状态：</strong>63 个确定性测试通过；真实 GPT 的 cache 命中和质量非劣还在评测。
             effort routing 默认关闭。
           </p>
         </div>
@@ -255,6 +255,17 @@
       </section>
 
       <section class="alt">
+        <div class="wrap product">
+          <div class="product-copy">
+            <p class="section-kicker">CODEX APP</p>
+            <h2>同一个 model，在 App 里也能选。</h2>
+            <p>同一套本地 provider 也接入了 Codex app。运行 <code>jev-codex setup-app</code>，完全重启 app 后新建 task，在 model picker 里选择 <code>Jev Auto Router</code>。</p>
+          </div>
+          <img class="app-shot" src="/img/in-post/codex-auto-router/codex-app-model-picker.png" alt="Codex app model picker with Jev Auto Router selected" loading="lazy" />
+        </div>
+      </section>
+
+      <section class="alt">
         <div class="wrap">
           <p class="section-kicker">证据</p>
           <h2>已经证明什么，还没证明什么。</h2>
@@ -264,7 +275,7 @@
               <strong>确定性行为</strong>
               <p>
                 turn 识别、tool-loop pinning、retry dedupe、价格 gate、session guard、effort
-                anchor、compaction reset 和 session store。共 60 个测试。
+                anchor、compaction reset 和 session store。共 63 个测试。
               </p>
             </article>
             <article class="card">
@@ -287,7 +298,7 @@
           <p class="section-kicker">快速开始</p>
           <h2>从源码构建，先跑一个小任务。</h2>
           <p class="quick-copy">
-            需要 Node.js 22+、已登录的 Codex CLI 和 TypeSafe Jev key。npm 包正在准备；当前使用源码安装。
+            需要 Node.js 22+、已登录的 Codex CLI 和 TypeSafe Jev key。npm registry 版本还没有发布；当前使用源码安装。
           </p>
           <pre class="code-block"><code>git clone https://github.com/miniLV/Jev-Auto-Router.git
 cd Jev-Auto-Router
@@ -300,6 +311,8 @@ node bin/jev-codex.mjs</code></pre>
           <pre class="code-block"><code>export JEV_CODEX_EFFORT_ROUTING=turn
 export JEV_CODEX_EFFORT_CAP=high
 node bin/jev-codex.mjs</code></pre>
+          <p class="quick-copy">Codex app 使用同一套本地 provider：</p>
+          <pre class="code-block"><code>jev-codex setup-app</code></pre>
           <p class="quick-links">
             <a href="https://github.com/miniLV/Jev-Auto-Router#readme">README</a>
             <span>·</span>
