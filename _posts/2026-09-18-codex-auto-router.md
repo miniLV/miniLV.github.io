@@ -1,195 +1,284 @@
 ---
 layout: post
-title: "Jev × Codex：逐调用模型路由技术设计"
-subtitle: "同一个会话、同一个工具循环，每次模型调用由 Jev 选择模型与推理档位"
+title: "Jev × Codex：把模型固定在 Turn 里，把 effort 放出来"
+subtitle: "从逐调用路由到 turn-pinned：一个 user turn 只问一次 Jev，tool loop 不换模型"
 date: 2026-09-18 09:00:00 +0800
 author: "miniLV"
-header-img: "/img/in-post/codex-auto-router/jev-auto-router-per-call.png"
-summary: "Jev Auto Router：同一 Codex 会话里，每次模型调用由 TypeSafe Jev 在 GPT-6（luna / sol / astra）候选对中做一次受约束 Choice；Guard 通过后只改 model 与 reasoning.effort，其余请求与 SSE 原样转发。"
+header-img: "/img/in-post/codex-auto-router/turn-router-main-flow.png"
+summary: "Jev Auto Router 第二版：模型在一个 user turn 内固定，tool loop 不换模型；effort 用 configuration_update 单独调整。加上价格 break-even、缓存热度、session pin 和升级触发，把“逐调用选模”改成更省缓存的 turn 级决策。"
 tags:
     - Jev Auto Router
     - Jev
     - Codex
     - LLM Router
+    - Prompt Cache
+    - Reasoning Effort
     - 模型路由
     - AI Agent
 redirect_from:
     - /2026/08/03/codex-auto-router/
 ---
 
-一个编码任务里，难题与例行步骤常常交替出现：理解需求、定位故障需要仔细推理；读文件、执行明确修改、处理普通工具结果，未必需要同一档模型。
+一个编码任务里，难题和例行步骤经常交替出现：定位故障要仔细推理，读文件、执行明确修改、处理普通工具结果，未必需要同一档模型。
 
-**Jev Auto Router** 要做的事情可以一句话说清：在**同一个 Codex 会话**里，为每一次模型调用选择合适的 GPT 模型与推理档位。会话不拆、工具循环不变，变的只是每次请求里的 `model` 和 `reasoning.effort` 两个字段。
+上一版 Jev Auto Router 的直觉是：既然每次模型调用都不同，那就让 Jev 在**每一次调用**前重新选一次模型。
 
-这里的 [Jev](https://docs.typesafe.ai/introduction) 是 TypeSafe 提供结构化判断的服务：它对一组已经合法的候选做一次 typed Choice；本地代码负责资格准入、安全约束和最终执行。工具执行始终由 Codex 管理，Jev 不成为 Codex 的执行模型。
+这个设计能跑，但忽略了一个很贵的现实：**切模型会让新模型重建 prompt prefix。** 在长会话里，重建成本可能比“选对更便宜的模型”省下来的钱还多。
 
-> **当前状态：** 方案 A 运行时已落地（固定基线 / Shadow·Active / Guard·Apply / 取消传播等，确定性 HTTP 测试通过）。真实可重跑的 Codex 跨模型工具循环（A→B→A）、独立取消与配对评估发布结论仍在补证据。本文整理自仓库[可视化技术设计稿](https://github.com/miniLV/Jev-Auto-Router/blob/master/tech-design.html)，描述目标架构；模型阵容以仓库 README 为准（当前为 **GPT-6**：`gpt-6-luna` / `gpt-6-sol` / `gpt-6-astra`）。
+第二版把决策粒度从 **Model Call** 提到了 **Turn**：
 
-源码与决策记录：[miniLV/Jev-Auto-Router](https://github.com/miniLV/Jev-Auto-Router)（Apache-2.0）· [ADR 0017](https://github.com/miniLV/Jev-Auto-Router/blob/master/docs/adr/0017-per-call-responses-routing.md) · [架构方案](https://github.com/miniLV/Jev-Auto-Router/blob/master/docs/solution.md)
+> 一个 user turn 只问一次 Jev，模型固定到这一轮的整个 tool loop；effort 可以单独调整。
 
-当前候选是精确的 `(model, reasoning_effort)` 对，不是品牌口头档。仓库 README 里的 GPT-6 阵容是：`gpt-6-luna`（高强度推理）、`gpt-6-sol`（常规主力与固定回退基线角色）、`gpt-6-astra`（默认不在候选中，仅在证据或用户指令准入时进入）。模型选择器里「看得见」不等于 caller edge 上可执行。
+这篇文章记录新的 turn-pinned 架构、effort routing 的边界，以及我对“什么时候真的省钱”的判断。
 
-<br>
-
-## 一次调用走哪条路
-
-![系统拓扑：Codex CLI、Codex Router、Jev Router、认证 caller edge 与 GPT 模型的主链路，TypeSafe Jev 作为路由决策支线](/img/in-post/codex-auto-router/jev-topology.png)
-
-主线只处理 Codex 原生的 Responses 请求，一共五站：
-
-- **Codex CLI（HOST）**：保留一个会话与工具循环，请求目标是虚拟模型 `jev/auto`；
-- **Codex Router（本地入口）**：识别 `jev/auto`，把 Responses 请求交给本地 Jev Router；
-- **Jev Router（决策 + 应用）**：提取准许发送的事实、构造候选、校验选择，只改 `model` 与 `reasoning.effort`；
-- **Caller edge（认证出口）**：用已验证的原生认证通道发送真实模型请求，禁止再次路由到 `jev/auto`；
-- **GPT 模型（执行）**：实际执行本次调用，SSE 响应沿原路即时返回 Codex。
-
-TypeSafe Jev 挂在支线上（图中虚线）：接收白名单状态与可用的 `(model, effort)` 候选，返回一个选择及置信度。它不接收完整请求、工具输出或认证凭据。
-
-三条边界约束是这个拓扑成立的根基：
-
-1. **用户内容只走主线**：原始文本与工具结果只通过本地代理到达它原本要去的 GPT 上游；
-2. **Jev 支线只携带白名单事实**：送出去的是结构化路由状态，不是对话内容；
-3. **入口与出口分开**：虚拟模型入口 `jev/auto` 与认证 caller edge 是两个边界，转发的请求禁止再指回 `jev/auto`，避免递归转发。
+> **当前状态：** 0.1.0 alpha。确定性测试 60/60 通过；真实 Codex + GPT 的 cache 命中和质量非劣还没有完成端到端验证。effort routing 默认关闭，先做小任务 smoke，再考虑长期开启。
 
 <br>
 
-## 六个模块，各自负责什么
+## 先把三个词说清
 
-![Jev Router 六个模块：请求接入、候选与隐私、一次 Jev Choice、校验并应用、认证与流转发、被动观测](/img/in-post/codex-auto-router/jev-modules.svg)
-
-接口尽量小：决策、实际执行和观测分开，避免在 Jev 之外冒出第二个隐藏的选模器。几个设计意图值得单独说：
-
-- **Jev 只被问一次。** M3 用固定版本、固定问题模板做一次有截止时间的调用，超时或失败直接走回退，不存在「再问一次换个答案」。
-- **Guard 只校验，不改选。** M4 检查候选成员、当前可用性、用户约束和置信度阈值，全部是确定性检查；通过后才由 Apply 覆盖请求里的两个字段。
-- **观测是旁路。** M6 记录 Jev 提议的组合、实际应用的组合和上游报告的真实模型，缺失值标为 `UNKNOWN`，不记录原文；观测失败不阻断、也不改写 Codex 收到的响应。
-
-<br>
-
-## Codex 与 Jev 怎样交互
-
-![Codex、Codex Router、Jev Router、TypeSafe Jev 与 caller edge 的逐调用交互时序图](/img/in-post/codex-auto-router/jev-sequence.png)
-
-一次调用的完整旅程：Codex 发出 `Responses(model=jev/auto)` → Codex Router 转交本地入口 → Jev Router 送出白名单事实与候选组合 → Jev 返回 `pair_id + confidence` → Guard 校验、Apply 只写 `model / effort` → 真实模型请求发给认证 caller edge → 原生 SSE / JSON 即时回传。
-
-两个容易被忽略的点：
-
-- **响应不等整段生成完成。** SSE 事件边到边回传，观测模块旁路读取完成事件；
-- **工具之后重新路由。** Codex 执行工具产生的新模型调用会再走一遍完整路由。路由粒度是「每次模型调用」，不是「每个任务」。
-
-<br>
-
-## 业务流程：从用户任务到交付
-
-![Jev 自动路由的业务流程：准入检查、构造候选与事实、Jev 选择组合、Guard 与 Apply、认证上游执行、工具结果回到下一轮](/img/in-post/codex-auto-router/jev-flow.svg)
-
-三种情况根本不进 Jev：路由关闭（OFF）、用户手动固定模型、基础设施调用，直接走确定性直通。隐私检查不过、Jev 失败、选择无效或置信度不足，都在**发出上游请求之前**回退到事先验证的固定组合。
-
-反过来，如果上游已经开始输出，网络中断就直接作为该次调用失败上报，不在同一调用上自动换模型重放——避免重复计费和不可预期的半截响应。
-
-任务结束时的质量验收使用任务产物，不用模型自报。
-
-<br>
-
-## 路由怎么决定，怎么 Apply
-
-**Jev 之前：候选集合与输入**
-
-- **可用组合**：来自认证通道实际可请求的模型与 effort；每个候选是完整的 `(model, effort)` 对，模型和档位不分开拼接。
-- **硬约束**：用户手动固定模型直接执行；基础设施调用使用固定组合；不符合能力与可用性要求的组合先排除。
-- **送给 Jev**：调用类型、当前模型、上下文区间、工具名称与状态、错误类别等白名单事实；任务摘要只有明确允许发送时才可加入。
-- **不送 Jev**：原始用户文本、工具输出、完整会话、代码文件内容与认证信息。
-
-**Jev 之后：校验、回退与记录**
-
-- **Jev 回答**：一个候选 pair ID 与置信度。
-- **Guard**：检查 pair ID 属于当前候选、模型仍可请求、用户约束未被覆盖、置信度达到已校准阈值。
-- **失败回退**：使用事先验证、且在当前 caller edge 上已实测可请求的固定基线（例如 `gpt-6-sol/medium`；**没有产品级默认组合**，须显式配置 `JEV_BASELINE`）；不可用则在发送前明确失败；用户固定模型不会被回退降级。
-- **记录**：区分 Jev 提议、实际应用和上游报告的真实模型；未知用量保留 `UNKNOWN`。
-
-Apply 前后，请求长这样（示意）：
-
-```json
-// Codex 发出的请求
-{
-  "model": "jev/auto",
-  "reasoning": { "effort": "medium" },
-  "input": "…",
-  "tools": ["…"],
-  "stream": true
-}
+```text
+Session
+└─ Turn：你发一句话 → 最终回答
+   ├─ Model Call 1
+   ├─ Tool Call / Tool Result
+   ├─ Model Call 2
+   └─ ...
 ```
 
-```json
-// Apply 后发给 caller edge
-{
-  "model": "gpt-6-sol",
-  "reasoning": { "effort": "high" },
-  "input": "…",
-  "tools": ["…"],
-  "stream": true
-}
-```
+- **Model Call**：模型被请求一次。工具结果回来后再次请求，就是新的 Model Call。
+- **Tool Loop**：模型 → 工具 → 模型 的来回。
+- **Turn**：你发一句话，到它最后答完。
 
-Apply 合约只有一行：
-
-```ts
-routed = { ...request, model: chosen.model, reasoning: { ...request.reasoning, effort: chosen.effort } }
-```
-
-`input`、工具定义、工具调用 ID、`stream` 标记与其余请求字段原样保留，`service_tier` 不暗中改写。
+旧设计在每次 Model Call 前都路由；新设计只在**新的 user turn** 开头路由。tool continuation、工具结果回传、同一轮的重试，都复用已经固定的模型。
 
 <br>
 
-## 请重点 Review 的三个决定
+## 逐调用路由为什么不对
 
-### R1 · 认证 caller edge 的契约
+Prompt cache 按请求前缀命中。前缀包括 system/developer 消息、工具定义、历史消息等。
 
-确认验证通过的是哪个版本和入口；明确认证归属、请求头转发、取消传播，以及 caller edge 升级时的兼容测试。这个入口必须绕开 `jev/auto` 再路由，否则拓扑里「入口与出口分开」的约束就破了。
+切到另一个模型时，新模型需要重新 prefill 这个前缀；旧模型已经建好的 cache 不会自动共享给新模型。上下文越长，这笔重建越贵。
 
-### R2 · 隐私与决策信息量
+更糟的是 tool loop：
 
-在不发送原文的前提下，哪些结构化事实足以让 Jev 区分「简单跟进」和「困难推理」？如果事实不足，该次调用就使用可靠组合，并在 shadow 数据中量化这个比例——用数据回答「白名单到底够不够用」。
+- 一次工具调用后，模型要重新读一遍前文；
+- 如果每次都重新选模型，就可能每次都触发一次 prefix 重建；
+- 任务中途模型还会来回摇，行为不稳定。
 
-### R3 · 激活标准
+所以 turn-pinned 的原则不是“少选几次模型”这么简单，而是：
 
-先在 shadow 模式记录延迟、提议组合和故障；再用相同任务与验收标准做配对执行，成本计入 Jev 调用、缓存损失与返工。只有质量达标，才讨论总成本收益。
+> **把切换限制在 turn 边界，让 tool loop 内部只发生模型调用，不发生模型切换。**
+
+这也是第一张图想表达的主线。
+
+<br>
+
+## 主流程：一个 Turn 只做一次决定
+
+![Turn Router 主流程：新 user turn 才问 Jev，模型固定到 tool loop 结束](/img/in-post/codex-auto-router/turn-router-main-flow.png)
+
+一次 turn 的路径：
+
+1. 你发一句话，`jev-codex` 启动真实 Codex，并把虚拟模型 `jev-router` 放进 picker。
+2. 本地代理识别出这是一个 fresh user turn。
+3. 把 prompt、当前模型、上下文和候选模型交给 Jev，问一次。
+4. Jev 返回模型选择、置信度和复杂度评分。
+5. 确定性 Guard 检查用户指定、置信度、可用性、价格、缓存和稳定保护。
+6. 把选中的真实模型写进请求；这一轮后续的 tool loop 全部复用它。
+7. 下一次 user turn 才重新判断。
+
+几个容易被忽略的细节：
+
+- **Jev 只在新 turn 被问一次**，不是每次 model call 都问。
+- **相同请求重试不重复问 Jev**：prompt hash 和上下文长度相同，就复用上一轮决策，避免 transport retry 触发第二次选择。
+- **手动选真实模型会绕过路由**：`jev-router` 只在 picker 里出现，用户显式选择 `gpt-6-sol` 之类的真实模型时直接透传。
+- **工具执行仍然由 Codex 管理**：Jev 只做一次结构化选择，不接管工具，也不成为执行模型。
+
+<br>
+
+## 模型固定之后，effort 才是细粒度变量
+
+模型固定下来后，还有一个变量可以动：**reasoning effort**。
+
+这就是第二张图里的控制回路：选 → 跑 → 学。
+
+![Turn Router 控制回路：选模型和 effort，固定模型跑 tool loop，再用 usage 和 session 反馈下一轮](/img/in-post/codex-auto-router/turn-router-control-loop.png)
+
+关键区别可以压成一张表：
+
+| 变量 | 改什么 | 对 cache 的影响 |
+| --- | --- | --- |
+| Model | 单价、能力、上下文窗口 | 新模型要重建 prefix |
+| Effort | reasoning / output token | 模型和 prefix 不变，可以保留 cache |
+| Session pin | 模型稳定、切换次数、冷却 | 不改变请求前缀 |
+
+所以更合理的顺序是：
+
+```text
+先降 effort
+再在 break-even 过线时降 model
+永远不要在 tool loop 内切 model
+```
+
+![收益边界：强模型 + low effort 是最稳的收益；降 model 要等 break-even](/img/in-post/codex-auto-router/turn-router-tradeoffs.png)
+
+### effort 怎么改，才不会把 cache 弄丢
+
+在支持 mid-conversation effort update 的模型上，做法不是改请求顶层的 `reasoning.effort`，而是：
+
+- request-level effort 保持 baseline 不变；
+- 需要变化时，在历史里插入 `configuration_update`；
+- 后续请求把之前的 update 按原 anchor 重放，保持 prefix 连续；
+- compaction 或模型切换时，重置 baseline 和 update；
+- 用 `JEV_CODEX_EFFORT_CAP` 限制上限，默认 `high`；
+- 没有评分时回退到 `JEV_CODEX_EFFORT_FALLBACK`。
+
+当前实现是 **per-turn effort**，不是 per-step。也就是说，一个 turn 开始时选一次 effort，tool loop 内沿用；还没有做到“读文件用 low、连续失败升 high”的逐步骤调节。
+
+这不是偷懒，而是因为 per-step 需要更完整的 history provenance：一个薄代理如果只是在每次请求末尾追加 update，却不在下一轮保留旧 update，prefix 会立刻分叉，反而更贵。
+
+因此第二版先把 per-turn 做对，并把 effort routing 默认设为关闭：
+
+```sh
+export JEV_CODEX_EFFORT_ROUTING=turn
+```
+
+先跑一个小任务 smoke，确认 provider 接受 `configuration_update`，再长期开启。
+
+<br>
+
+## 关键分析：收益到底从哪里来
+
+先说结论：
+
+> **最大的浪费通常是“贵模型 + 高 effort 做简单活”，但真正能安全收割的通常是 effort，不是 model。**
+
+原因是两者的成本结构不同：
+
+- **降 model**：所有 token 的单价都降，但新模型要重建 prefix；长上下文下，重建可能吃掉好几轮节省。
+- **降 effort**：模型和 prefix 都不变，减少的是 reasoning 和 output token；这部分本来就不在 cache 里。
+- **per-call 切 model**：一个 tool loop 内反复重建，通常是最差的选择。
+
+竞品的数据也能说明“收益取决于 baseline”：
+
+- [dominicrico/jev-router](https://github.com/dominicrico/jev-router) 在 Claude Code 上的真实运行：小任务相对 always Opus **−97%**，日常任务 **−65%**；但困难任务上 plain Sonnet 最便宜。它的长 warm session 还有一个诚实的弱项：cache guard 把切换从 6 次降到 1 次、cache 重写减半，但账单没变，lean 平均 Opus 成本，plain Sonnet 还便宜 43%。
+- [robertn702/reasoning-router](https://github.com/robertn702/reasoning-router) 的精选 SWE-bench 示例：短 Flask 修复输出 token **−52%**，较难的 Django/pytest 只有 **−5~7%**。这是 selected tasks，不是普遍保证。
+- [nanocode PR #805](https://github.com/gakonst/nanocode/pull/805) 证明了 cache-preserving effort update 的请求形态，但 PR 明确说测试是 synthetic，**没有 live cache-hit claim**。
+
+这些数字不能直接搬到我们的项目上，但它们给出一个很重要的实验设计原则：
+
+**必须同时报告“相对 always frontier”和“相对已经用中间档模型”的收益。** 否则很容易把“不要什么都用 Opus”说成“路由很聪明”。
+
+<br>
+
+## 确定性政策：Jev 提议，代码决定
+
+Jev 只负责给判断，不直接改请求。真正决定是否切换的是本地 policy：
+
+- **用户 override**：`use ...` 永远优先；
+- **置信度**：低置信不降级，升级最多到 balanced；
+- **可用性**：目标 tier 不在当前目录里就向上找；
+- **价格 break-even**：有价格表时，算重建成本 / 每 turn 节省，剩余 turn 不够就不切；
+- **缓存热度**：响应 usage 里的 `cached_tokens` 为 0 时，当前模型是冷缓存，降级可以放行；
+- **稳定保护**：超过 N 轮、切换预算用完、cooldown 未到，就锁定当前模型；
+- **升级触发**：默认只在上游 failure、高复杂度信号或用户指定时升级，避免 Jev 一说升级就切；
+- **compaction**：上下文被压缩后，缓存和 effort provenance 一起重置。
+
+价格 break-even 的核心就一行：
+
+```text
+重建成本 / 每 turn 节省 ≈ 需要多少 turn 才回本
+```
+
+剩余 turn 小于这个数，就不值得切。没有价格表时，回退到固定的上下文阈值，不假装自己会算钱。
+
+Session 状态会持久化到：
+
+```text
+~/.codex-router/sessions.json
+```
+
+只存模型、tier、turn/switch 计数、缓存观测和 effort baseline，不存 prompt 或凭据。这样 `codex resume` 后不用从零重新判断，也能避免恢复会话时又切一次模型。
+
+<br>
+
+## 现在证明了什么，没证明什么
+
+已经证明的是确定性的部分：
+
+- turn 识别、tool continuation 不重复问 Jev；
+- 相同请求重试不重复路由；
+- 模型在 tool loop 内不变；
+- 价格 break-even、冷缓存、升级触发、session lock/cooldown 的 gate 行为；
+- effort anchor 的插入、重放、失效和 compaction 重置；
+- session store 的加载、保存和 TTL。
+
+**还没有证明的是商业上最重要的问题：**
+
+- 真实 GPT 模型上的 cache 命中率；
+- effort 降低后质量是否非劣；
+- 真实 output/reasoning token 节省；
+- 端到端延迟和 Jev 成本；
+- 长 warm session 里到底能不能回本。
+
+评测计划在仓库的 [evaluation-plan.md](https://github.com/miniLV/Jev-Auto-Router/blob/master/docs/evaluation-plan.md)：6 个合成任务 × 3 个 arm（always strong/high、effort-only、model+effort）× 3 次，再加 20 个真实任务。成本要算全：input、cached、cache write、output、reasoning、Jev、重试和验收。质量先于成本，低质量低价不算节省。
 
 <br>
 
 ## 上手试试
 
-前提：[TypeSafe 账号与 Jev API key](https://docs.typesafe.ai/introduction/quickstart)、Node.js 22+、已登录的 Codex CLI。
-
-| 环境变量 | 说明 |
-| --- | --- |
-| `JEV_API_KEY` | TypeSafe Jev 密钥，启用路由时必填（不要写进仓库） |
-| `JEV_UPSTREAM_BASE_URL` | 认证 caller edge 地址（不会递归回到本路由器） |
-| `JEV_BASELINE` | 当前 edge 已实测可请求的固定回退组合，如 `gpt-6-sol/medium`（必填，无通用默认） |
-| `JEV_ROUTER_OFF` | `1` = OFF 模式：不调用 Jev，`jev/auto` 用固定基线 |
-| `JEV_PORT` | 本地代理端口，默认 `8787` |
+当前是源码安装；npm 包 0.1.0 还在准备发布。
 
 ```sh
 git clone https://github.com/miniLV/Jev-Auto-Router.git
 cd Jev-Auto-Router
 npm ci
-npm test          # 先构建再跑全部测试
-export JEV_API_KEY="<your-key>"
-export JEV_BASELINE="gpt-6-sol/medium"   # 换成你在该 caller edge 上已验证的组合
-export JEV_UPSTREAM_BASE_URL="<authenticated-caller-edge-url>"
-npm start         # 默认 Shadow；仪表板 http://127.0.0.1:8787
-curl -s localhost:8787/health   # 路由状态、基线档位、模型目录
+npm run build
+
+export JEV_API_KEY="<your-typesafe-key>"
+node bin/jev-codex.mjs
 ```
 
-完整配置表与 Active 门禁见仓库 [README](https://github.com/miniLV/Jev-Auto-Router#配置)。
+effort routing 默认关闭。想试新的控制回路：
 
-代理暴露 `POST /v1/responses`：`model=jev/auto` 触发逐调用路由，真实模型直接透传。访问 `http://127.0.0.1:8787/install` 可生成一份交给 Codex 执行的安装简报，把外部 Codex Router 的 `jev/auto` 指到本地代理，全部改动可回滚。
+```sh
+export JEV_CODEX_EFFORT_ROUTING=turn
+export JEV_CODEX_EFFORT_CAP=high
+node bin/jev-codex.mjs
+```
+
+然后在 Codex 的模型选择器里选 `jev-router`。想绕过路由时，直接选真实模型即可。
+
+更完整的配置、价格表和 session 选项见 [README](https://github.com/miniLV/Jev-Auto-Router#配置) 和 [设计文档](https://github.com/miniLV/Jev-Auto-Router/blob/master/docs/codex-turn-router.md)。
+
+<br>
+
+## 还缺什么
+
+- per-turn effort 已落地，per-step effort 还没做；
+- 只对声明 `supports_reasoning_effort_updates` 的模型启用；
+- cache warmth 只观测当前模型，还没有 per-target cache 记录；
+- 升级触发还没有解析工具错误和验收失败；
+- session store 没有跨进程写锁；
+- 真实 Codex + GPT 的 live smoke 和配对评测还没完成。
+
+所以它现在是一个**能工作的 alpha**，不是“已经证明省钱”的成品。
 
 <br>
 
 ## 写在最后
 
-这套设计最重要的取舍，是把「语义判断」和「执行安全」彻底分开：Jev 负责在一次受约束的选择里给出专业判断，本地代码负责让它永远只能在合法候选里选、失败永远有回退、用户固定永远不被降级。路由器自己不偷偷做第二个决策。
+第二版最重要的变化，不是多了一个 effort 参数，而是承认了一件事：
 
-设计稿与详细方案见仓库：[tech-design.html](https://github.com/miniLV/Jev-Auto-Router/blob/master/tech-design.html)。外部参考：[Gist 拓扑](https://gist.github.com/antoniolg/62f82f2a5d191fe074e3f5065501993d) · [TypeSafe 置信度路由](https://docs.typesafe.ai/patterns/confidence-routing) · [Codex 配置](https://learn.chatgpt.com/docs/config-file/config-reference)。
+> **路由的价值不只是“选更强的模型”，也包括“少做几次昂贵的切换”。**
 
-欢迎 Star、Issue，以及对照实验的拍砖。
+模型是粗粒度变量，effort 是细粒度变量。先降 effort，再算 model 的 break-even；不要在 tool loop 里反复切模型。
+
+这比“每次调用都让 Jev 选一次”更慢一点，但更稳、更便宜，也更像真实编码任务的工作方式。
+
+---
+
+源码：[miniLV/Jev-Auto-Router](https://github.com/miniLV/Jev-Auto-Router)（Apache-2.0）  
+设计文档：[docs/codex-turn-router.md](https://github.com/miniLV/Jev-Auto-Router/blob/master/docs/codex-turn-router.md)  
+评测计划：[docs/evaluation-plan.md](https://github.com/miniLV/Jev-Auto-Router/blob/master/docs/evaluation-plan.md)
