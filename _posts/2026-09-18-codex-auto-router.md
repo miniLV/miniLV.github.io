@@ -80,7 +80,7 @@ Prompt cache 按请求前缀命中。前缀包括 system/developer 消息、工�
 
 一次 turn 的路径：
 
-1. 你发一句话，`jev-codex` 启动真实 Codex，并把虚拟模型 `jev-router` 放进 picker。
+1. 你发一句话，`jev-codex` 启动真实 Codex，并把虚拟模型 `jev-auto` 放进 picker。
 2. 本地代理识别出这是一个 fresh user turn。
 3. 把 prompt、当前模型、上下文和候选模型交给 Jev，问一次。
 4. Jev 返回模型选择、置信度和复杂度评分。
@@ -92,7 +92,7 @@ Prompt cache 按请求前缀命中。前缀包括 system/developer 消息、工�
 
 - **Jev 只在新 turn 被问一次**，不是每次 model call 都问。
 - **相同请求重试不重复问 Jev**：prompt hash 和上下文长度相同，就复用上一轮决策，避免 transport retry 触发第二次选择。
-- **手动选真实模型会绕过路由**：`jev-router` 只在 picker 里出现，用户显式选择 `gpt-6-sol` 之类的真实模型时直接透传。
+- **手动选真实模型会绕过路由**：`jev-auto` 只在 picker 里出现，用户显式选择 `gpt-6-sol` 之类的真实模型时直接透传。
 - **工具执行仍然由 Codex 管理**：Jev 只做一次结构化选择，不接管工具，也不成为执行模型。
 
 <br>
@@ -248,7 +248,7 @@ export JEV_CODEX_EFFORT_CAP=high
 node bin/jev-codex.mjs
 ```
 
-然后在 Codex 的模型选择器里选 `jev-router`。想绕过路由时，直接选真实模型即可。
+然后在 Codex 的模型选择器里选 `jev-auto`。想绕过路由时，直接选真实模型即可。
 
 更完整的配置、价格表和 session 选项见 [README](https://github.com/miniLV/Jev-Auto-Router#配置) 和 [设计文档](https://github.com/miniLV/Jev-Auto-Router/blob/master/docs/codex-turn-router.md)。
 
