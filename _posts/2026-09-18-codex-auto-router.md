@@ -101,9 +101,9 @@ Prompt cache 按请求前缀命中。前缀包括 system/developer 消息、工�
 
 模型固定下来后，还有一个变量可以动：**reasoning effort**。
 
-这就是第二张图里的控制回路：选 → 跑 → 学。
+这就是第二张图里的控制回路：选 → 闸 → 跑 → 学。
 
-![Turn Router 控制回路：选模型和 effort，固定模型跑 tool loop，再用 usage 和 session 反馈下一轮](/img/in-post/codex-auto-router/turn-router-control-loop.png)
+![Turn Router 控制回路：选 → 闸 → 跑 → 学；固定模型跑 tool loop，再用 usage 和 session 反馈下一轮](/img/in-post/codex-auto-router/turn-router-control-loop.png)
 
 关键区别可以压成一张表：
 
